@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Session Request - Techari</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Request a Session</h2>
+    <form id="session-request-form">
+      <label for="mentor">Select Mentor:</label>
+      <select id="mentor" required>
+        <!-- Options will be populated dynamically -->
+      </select>
+
+      <label for="date">Preferred Date:</label>
+      <input type="date" id="date" required>
+
+      <label for="time">Preferred Time:</label>
+      <input type="time" id="time" required>
+
+      <label for="message">Additional Message:</label>
+      <textarea id="message" placeholder="Any specific topics you want to discuss?"></textarea>
+
+      <button type="submit">Send Request</button>
+    </form>
+    <p id="response-message"></p>
+  </div>
+
+  <script src="js/session-request.js"></script>
+</body>
+</html>
