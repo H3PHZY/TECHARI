@@ -5,50 +5,108 @@ html, body {
     background-color: #f4f4f4;
 }
 
+/* --- Color Palette --- */
+:root {
+  --bg-main: #F5D5E0;         /* Soft, feminine background */
+  --primary: #6667AB;         /* Calm, professional (main buttons, links) */
+  --secondary: #7B337E;       /* Bold, empowering (hover, highlights) */
+  --card: #fff;               /* Card/container background */
+  --shadow: #420D4B;          /* Deep, focused (shadows, borders) */
+  --footer: #210635;          /* Elegant, techy (footer, contrast) */
+  --text-dark: #210635;       /* For headings and main text */
+  --mentor: #6667AB;          /* Mentor button (same as primary) */
+  --mentee: #7B337E;          /* Mentee button (same as secondary) */
+}
+
+/* Backgrounds */
+body {
+  background: var(--bg-main);
+  color: var(--text-dark);
+}
+
+/* Cards/Containers */
 .container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--shadow);
+  padding: 2em;
+  margin-top: 2em;
 }
 
-h2 {
-    text-align: center;
-    color: #333;
+/* Headings */
+h2, h3 {
+  color: var(--secondary);
+  text-align: center;
 }
 
+/* Inputs */
 input[type="email"],
 input[type="password"],
 input[type="text"],
 input[type="url"],
 textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
+/* Primary Buttons */
 button {
-    background-color: #5cb85c;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  width: 100%;
 }
 
 button:hover {
-    background-color: #4cae4c;
+  background: var(--secondary);
 }
 
+/* Role-Specific Buttons */
+.mentor-btn {
+  background: var(--mentor);
+}
+
+.mentor-btn:hover {
+  background: var(--secondary);
+}
+
+.mentee-btn {
+  background: var(--mentee);
+}
+
+.mentee-btn:hover {
+  background: var(--primary);
+}
+
+/* Message */
 #message {
-    color: red;
-    text-align: center;
+  color: red;
+  text-align: center;
 }
 
+/* Footer */
+footer {
+  background: var(--footer);
+  color: #fff;
+  padding: 1em 0;
+  text-align: center;
+  margin-top: 3em;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
-    .container {
-        width: 95%;
-    }
+  .container {
+    width: 95%;
+  }
 }

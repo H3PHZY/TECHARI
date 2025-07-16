@@ -1,8 +1,9 @@
 // This file manages user role selection during signup and updates user profiles based on their selected roles (Mentor or Mentee).
 
 // Make sure Firebase is initialized via firebase-config.js
-
-// Do NOT redeclare db or auth here; they are already declared in firebase-config.js
+auth.onAuthStateChanged(user => {
+  console.log("🌟 Auth state changed. Current user:", user);
+});
 
 document.getElementById('mentorButton').addEventListener('click', () => {
   saveRole('mentor');

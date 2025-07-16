@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Techari</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="js/mentor-dashboard.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome to Your Dashboard</h2>
+    <div id="profileInfo"></div>
+    <div id="dashboardContent"></div>
+    <button onclick="logout()">Logout</button>
+
+    <!-- Mentor dashboard section -->
+    <h3>Session Requests</h3>
+    <div id="session-Requests"></div>
+    <div id="sessionRequests"></div>
+    <h3>Accepted Sessions</h3>
+    <div id="acceptedSessions"></div>
+    <p id="message"></p>
+
+    <!-- Mentor Availability Section -->
+    <div id="mentorAvailability" style="margin-top:2em;">
+      <h3>Set Your Availability</h3>
+      <form id="availabilityForm">
+        <label for="availableDate">Date:</label>
+        <input type="date" id="availableDate" required>
+        <label for="availableTime">Time:</label>
+        <input type="time" id="availableTime" required>
+        <button type="submit" class="mentor-btn">Add Slot</button>
+      </form>
+      <div id="availabilityMsg"></div>
+      <h4>Your Available Slots</h4>
+      <ul id="availabilityList"></ul>
+    </div>
+
+    <!-- Google Calendar Integration Section -->
+    <div id="googleCalendarIntegration" style="margin-top:2em;">
+      <h3>Google Calendar Integration</h3>
+      <button id="connectGoogleCalendar" class="mentor-btn">Connect Google Calendar</button>
+      <div id="calendarStatus"></div>
+    </div>
+  </div>
+  <footer>
+    &copy; 2025 Techari. Empowering Women in Tech.
+  </footer>
+
+</body>
+</html>
