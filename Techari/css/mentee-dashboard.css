@@ -1,0 +1,57 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Gradient text style */
+.gradient-title {
+  background: linear-gradient(to right, #7e22ce, #db2777);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Active tab styling */
+.tab-link.active {
+  color: #9333ea; /* Tailwind purple-600 */
+  border-bottom-color: #9333ea;
+}
+
+/* Smooth tab switching transition (optional) */
+.tab-link {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Small pulse dot for notifications */
+button.relative span {
+  animation: ping 1s infinite ease-in-out;
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Utility spacing */
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
