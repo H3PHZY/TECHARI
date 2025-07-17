@@ -14,17 +14,8 @@ function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(async () => {
-      const user = firebase.auth().currentUser;
-      const userDoc = await db.collection('users').doc(user.uid).get();
-      const profile = userDoc.data();
-      if (profile.role === "mentor") {
-        window.location.href = "mentor-dashboard.html";
-      } else if (profile.role === "mentee") {
-        window.location.href = "mentee-dashboard.html";
-      } else {
-        window.location.href = "index.html"; // fallback
-      }
+    .then(() => {
+      window.location.href = "mentor-dashboard.html"; // Go to dashboard after login
     })
     .catch(error => {
       document.getElementById('message').innerText = error.message;
