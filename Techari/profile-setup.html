@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,23 +7,42 @@
 </head>
 <body>
   <div class="container">
-    <h2>Profile Setup</h2>
-    <form id="profile-form">
-      <label for="bio">Bio:</label>
-      <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
+    <h2>Complete Your Profile</h2>
+    <form id="profileForm">
+      <label>Role:</label>
+      <select id="role" required>
+        <option value="">Select role</option>
+        <option value="mentor">Mentor</option>
+        <option value="mentee">Mentee</option>
+      </select><br>
 
-      <label for="skills">Skills:</label>
-      <input type="text" id="skills" placeholder="Enter your skills (comma separated)">
+      <label>Name:</label>
+      <input type="text" id="name" required><br>
 
-      <label for="interests">Areas of Interest:</label>
-      <input type="text" id="interests" placeholder="Enter your areas of interest (comma separated)">
+      <label>Email:</label>
+      <input type="email" id="email" readonly><br>
+
+      <label>Photo:</label>
+      <input type="url" id="photo" placeholder="Link to your photo"><br>
+
+      <label>Interests:</label>
+      <input type="text" id="interests" placeholder="e.g. Web Development, AI"><br>
+
+      <label>Bio:</label>
+      <textarea id="bio" rows="3"></textarea><br>
+
+      <label>Availability:</label>
+      <input type="text" id="availability" placeholder="e.g. Weekends, Evenings"><br>
 
       <button type="submit">Save Profile</button>
+      <div id="profileMessage"></div>
     </form>
-    <p id="message"></p>
-    <a href="profile-setup.html" class="mentor-btn">Edit Profile</a>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="js/firebase-config.js"></script>
   <script src="js/profile.js"></script>
 </body>
 </html>

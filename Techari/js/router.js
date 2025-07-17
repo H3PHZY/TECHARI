@@ -7,7 +7,7 @@ const router = (function() {
         '/profile-setup': 'profile-setup.html',
         '/mentor-directory': 'mentor-directory.html',
         '/session-request': 'session-request.html',
-        '/dashboard': 'dashboard.html',
+        '/dashboard': 'mentor-dashboard.html',
         '/progress': 'progress.html',
         '/resources': 'resources.html',
     };

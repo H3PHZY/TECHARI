@@ -2,55 +2,171 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com;">
   <title>Dashboard - Techari</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 100%;
+    }
+
+    .container-wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      flex: 1;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h2, h3, h4 {
+      margin-top: 30px;
+    }
+
+    footer {
+      background-color: #222;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .mentor-btn {
+      padding: 10px 15px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .mentor-btn:hover {
+      background-color: #0056b3;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input[type="date"],
+    input[type="time"] {
+      margin-bottom: 10px;
+      padding: 5px;
+      width: 100%;
+      max-width: 200px;
+    }
+
+    button {
+      display: block;
+    }
+  </style>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="https://apis.google.com/js/api.js"></script>
   <script src="js/mentor-dashboard.js"></script>
+  <script src="js/google-calendar-integration.js"></script>
+  <script src="js/mentor-availability.js"></script>
+  <script src="https://apis.google.com/js/api.js" async defer></script>
 </head>
 <body>
-  <div class="container">
-    <h2>Welcome to Your Dashboard</h2>
-    <div id="profileInfo"></div>
-    <div id="dashboardContent"></div>
-    <button onclick="logout()">Logout</button>
+  <div class="container-wrapper">
+    <div class="container">
+      <h2>Welcome to Your Dashboard</h2>
+      <div id="profileInfo"></div>
+      <div id="dashboardContent"></div>
+      <button onclick="logout()">Logout</button>
 
-    <!-- Mentor dashboard section -->
-    <h3>Session Requests</h3>
-    <div id="session-Requests"></div>
-    <div id="sessionRequests"></div>
-    <h3>Accepted Sessions</h3>
-    <div id="acceptedSessions"></div>
-    <p id="message"></p>
+      <h3>Session Requests</h3>
+      <div id="session-Requests"></div>
+      <div id="sessionRequests"></div>
 
-    <!-- Mentor Availability Section -->
-    <div id="mentorAvailability" style="margin-top:2em;">
-      <h3>Set Your Availability</h3>
-      <form id="availabilityForm">
-        <label for="availableDate">Date:</label>
-        <input type="date" id="availableDate" required>
-        <label for="availableTime">Time:</label>
-        <input type="time" id="availableTime" required>
-        <button type="submit" class="mentor-btn">Add Slot</button>
-      </form>
-      <div id="availabilityMsg"></div>
-      <h4>Your Available Slots</h4>
-      <ul id="availabilityList"></ul>
+      <h3>Accepted Sessions</h3>
+      <div id="acceptedSessions"></div>
+      <p id="message"></p>
+
+      <div id="mentorAvailability">
+        <h3>Set Your Availability</h3>
+        <form id="availabilityForm">
+          <label for="availableDate">Date:</label>
+          <input type="date" id="availableDate" required>
+          <label for="availableTime">Time:</label>
+          <input type="time" id="availableTime" required>
+          <button type="submit" class="mentor-btn">Add Slot</button>
+        </form>
+        <div id="availabilityMsg"></div>
+        <h4>Your Available Slots</h4>
+        <ul id="availabilityList"></ul>
+        <button id="syncAvailability" class="mentor-btn">Sync with Google Calendar</button>
+      </div> 
+
+      <div id="googleCalendarIntegration">
+        <h3>Google Calendar Integration</h3>
+        <button id="connectGoogleCalendar" class="mentor-btn">Connect Google Calendar</button>
+        <div id="calendarStatus"></div>
+        <div id="upcomingEvents" style="margin-top: 15px;"></div>
+      </div>
     </div>
 
-    <!-- Google Calendar Integration Section -->
-    <div id="googleCalendarIntegration" style="margin-top:2em;">
-      <h3>Google Calendar Integration</h3>
-      <button id="connectGoogleCalendar" class="mentor-btn">Connect Google Calendar</button>
-      <div id="calendarStatus"></div>
-    </div>
+    <footer>
+      &copy; 2025 Techari. Empowering Women in Tech.
+    </footer>
   </div>
-  <footer>
-    &copy; 2025 Techari. Empowering Women in Tech.
-  </footer>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('syncAvailability').addEventListener('click', function() {
+        if (window.googleCalendarIntegration?.syncAvailabilityWithCalendar) {
+          window.googleCalendarIntegration.syncAvailabilityWithCalendar();
+        }
+      });
+
+      document.getElementById('availabilityForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const date = document.getElementById('availableDate').value;
+        const time = document.getElementById('availableTime').value;
+        const startTime = new Date(`${date}T${time}`).toISOString();
+        const endTime = new Date(new Date(startTime).getTime() + 60 * 60 * 1000).toISOString();
+
+        if (window.googleCalendarIntegration?.checkCalendarConflicts) {
+          try {
+            const hasConflict = await window.googleCalendarIntegration.checkCalendarConflicts(startTime, endTime);
+            if (hasConflict && !confirm('You have a calendar conflict at this time. Add anyway?')) return;
+          } catch (error) {
+            console.log('Calendar conflict check failed:', error);
+          }
+        }
+
+        if (typeof saveAvailability === 'function') {
+          saveAvailability(date, time);
+        } else {
+          console.log('Availability saving function not found');
+        }
+      });
+    });
+
+    async function acceptSessionWithCalendar(sessionId, sessionData) {
+      if (window.googleCalendarIntegration?.acceptSessionWithCalendar) {
+        await window.googleCalendarIntegration.acceptSessionWithCalendar(sessionId, sessionData);
+      } else if (typeof acceptSession === 'function') {
+        acceptSession(sessionId);
+      }
+    }
+
+    window.acceptSessionWithCalendar = acceptSessionWithCalendar;
+  </script>
 </body>
 </html>

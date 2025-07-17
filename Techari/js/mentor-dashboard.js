@@ -1,80 +1,76 @@
-// This file manages the session dashboard, enabling mentors to accept or reject session requests from mentees.
+// mentor-dashboard.js
 
-document.addEventListener('DOMContentLoaded', function() {
-    const sessionRequestsContainer = document.getElementById('sessionRequests');
-    const messageElement = document.getElementById('message');
+// Google Calendar API Configuration
+const GOOGLE_CALENDAR_CONFIG = {
+  apiKey: 'AIzaSyC_UDGoqFu0cGzRTJFtWVa2RwMc8Gzi0RE',
+  clientId: '733226770691-3qjcu08bcfh6pav5beqcenicivfr91v2.apps.googleusercontent.com',
+  discoveryDoc: 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+  scopes: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events'
+};
 
-    // Fetch session requests from the database
-    function fetchSessionRequests() {
-        // Simulated fetch from a database
-        const sessionRequests = [
-            { id: 1, mentee: 'John Doe', status: 'pending' },
-            { id: 2, mentee: 'Jane Smith', status: 'pending' }
-        ];
+let gapi;
+let googleCalendarConnected = false;
 
-        displaySessionRequests(sessionRequests);
-    }
-
-    // Display session requests in the dashboard
-    function displaySessionRequests(requests) {
-        sessionRequestsContainer.innerHTML = '';
-        requests.forEach(request => {
-            const requestElement = document.createElement('div');
-            requestElement.classList.add('request');
-            requestElement.innerHTML = `
-                <p>Mentee: ${request.mentee}</p>
-                <button onclick="acceptRequest(${request.id})">Accept</button>
-                <button onclick="rejectRequest(${request.id})">Reject</button>
-            `;
-            sessionRequestsContainer.appendChild(requestElement);
-        });
-    }
-
-    // Accept a session request
-    window.acceptRequest = function(requestId) {
-        // Simulated acceptance logic
-        messageElement.textContent = `Session request ${requestId} accepted.`;
-        // Here you would typically update the database
-    };
-
-    // Reject a session request
-    window.rejectRequest = function(requestId) {
-        // Simulated rejection logic
-        messageElement.textContent = `Session request ${requestId} rejected.`;
-        // Here you would typically update the database
-    };
-
-    // Initial fetch of session requests
-    fetchSessionRequests();
-
-    const calendarBtn = document.getElementById('connectGoogleCalendar');
-    if (calendarBtn) {
-      calendarBtn.onclick = function() {
-        gapi.load('client:auth2', initClient);
-      };
-    }
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  initializeGoogleCalendar();
+  setupAuthStateListener();
 });
 
-auth.onAuthStateChanged(async user => {
-  if (!user) {
-    window.location.href = "index.html";
+// Initialize Google Calendar API
+function initializeGoogleCalendar() {
+  if (typeof window.gapi === 'undefined') {
+    console.error('Google APIs not loaded');
     return;
   }
 
-  // Fetch user profile
-  const userDoc = await db.collection('users').doc(user.uid).get();
-  const profile = userDoc.data();
-  document.getElementById('profileInfo').innerHTML = `
-    <p><strong>Name:</strong> ${user.email}</p>
-    <p><strong>Role:</strong> ${profile.role || ''}</p>
-    <p><strong>Bio:</strong> ${profile.bio || ''}</p>
-    <p><strong>Skills:</strong> ${(profile.skills || []).join(', ')}</p>
-    <p><strong>Interests:</strong> ${profile.interests || ''}</p>
-  `;
+  gapi = window.gapi;
+  const calendarBtn = document.getElementById('connectGoogleCalendar');
+  if (calendarBtn) {
+    calendarBtn.onclick = handleGoogleCalendarConnect;
+  }
+}
+
+// Setup Firebase auth state listener
+function setupAuthStateListener() {
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (!user) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    try {
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      const profile = userDoc.data();
+      renderProfileInfo(user, profile);
+      renderDashboardContent(profile, user.uid);
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
+  });
+}
+
+// Render profile information
+function renderProfileInfo(user, profile) {
+  const profileInfo = document.getElementById('profileInfo');
+  if (profileInfo) {
+    profileInfo.innerHTML = `
+      <p><strong>Name:</strong> ${profile.name || user.email}</p>
+      <p><strong>Role:</strong> ${profile.role || ''}</p>
+      <p><strong>Bio:</strong> ${profile.bio || ''}</p>
+      <p><strong>Skills:</strong> ${(profile.skills || []).join(', ')}</p>
+      <p><strong>Interests:</strong> ${profile.interests || ''}</p>
+    `;
+  }
+}
+
+// Render dashboard content based on role
+function renderDashboardContent(profile, userId) {
+  const dashboard = document.getElementById('dashboardContent');
+  if (!dashboard) return;
 
   if (profile.role === "mentor") {
-    // Mentor dashboard
-    document.getElementById('dashboardContent').innerHTML = `
+    dashboard.innerHTML = `
       <h3>Session Requests</h3>
       <div id="sessionRequests"></div>
       <h3>Accepted Sessions</h3>
@@ -82,354 +78,617 @@ auth.onAuthStateChanged(async user => {
       <p id="message"></p>
       <div id="mentorProfileEdit"></div>
       <div id="mentorAvailability"></div>
+      <ul id="availabilityList"></ul>
+      <button id="syncCalendarBtn" class="mentor-btn">Sync with Google Calendar</button>
     `;
-    loadMentorRequests(user.uid);
-    loadMentorAcceptedSessions(user.uid);
-    renderMentorProfileEdit(profile); // NEW
+    
+    renderMentorProfileEdit(profile);
     renderMentorAvailability();
+    loadSessionRequests();
+    loadAcceptedSessions();
+    loadAvailabilitySlots();
+    
+    // Setup calendar sync button
+    const syncBtn = document.getElementById('syncCalendarBtn');
+    if (syncBtn) {
+      syncBtn.addEventListener('click', syncAvailabilityWithCalendar);
+    }
   } else if (profile.role === "mentee") {
-    // Mentee dashboard
-    document.getElementById('dashboardContent').innerHTML = `
+    dashboard.innerHTML = `
       <h3>Your Session Requests</h3>
       <div id="menteeRequests"></div>
       <h3>Your Progress</h3>
       <div id="progress"></div>
       <p id="message"></p>
     `;
-    loadMenteeRequests(user.uid);
-    loadProgress(user.uid);
+    loadMenteeRequests(userId);
+    loadProgress(userId);
   }
-});
-
-function logout() {
-  auth.signOut().then(() => {
-    window.location.href = "index.html";
-  });
 }
 
-// Mentor: Load session requests from Firestore
-function loadMentorRequests(mentorUid) {
-  db.collection('sessions')
-    .where('mentorId', '==', mentorUid)
-    .where('status', '==', 'pending')
-    .get()
-    .then(snapshot => {
-      const container = document.getElementById('sessionRequests');
-      if (snapshot.empty) {
-        container.innerHTML = "<p>No session requests yet.</p>";
-        return;
-      }
-      container.innerHTML = '';
-      snapshot.forEach(doc => {
-        const req = doc.data();
-        const div = document.createElement('div');
-        div.className = 'request';
-        div.innerHTML = `
-          <p><strong>Mentee:</strong> ${req.menteeName || req.menteeId}</p>
-          <p><strong>Topic:</strong> ${req.topic || 'N/A'}</p>
-          <p><strong>Message:</strong> ${req.message || ''}</p>
-          <button onclick="acceptRequest('${doc.id}')">Accept</button>
-          <button onclick="rejectRequest('${doc.id}')">Reject</button>
-        `;
-        container.appendChild(div);
+// Handle Google Calendar connection
+async function handleGoogleCalendarConnect() {
+  try {
+    // First load the client library if not already loaded
+    if (!gapi.client) {
+      await new Promise((resolve) => {
+        gapi.load('client:auth2', resolve);
       });
-    });
-}
-
-// Mentee: Load their own session requests
-function loadMenteeRequests(menteeUid) {
-  db.collection('sessions')
-    .where('menteeId', '==', menteeUid)
-    .get()
-    .then(snapshot => {
-      const container = document.getElementById('menteeRequests');
-      if (snapshot.empty) {
-        container.innerHTML = "<p>You have not requested any sessions yet.</p>";
-        return;
-      }
-      container.innerHTML = '';
-      snapshot.forEach(doc => {
-        const req = doc.data();
-        container.innerHTML += `
-          <div class="request">
-            <p><strong>Mentor:</strong> ${req.mentorName || req.mentorEmail}</p>
-            <p>Status: ${req.status}</p>
-          </div>
-        `;
+      await gapi.client.init({
+        apiKey: GOOGLE_CALENDAR_CONFIG.apiKey,
+        clientId: GOOGLE_CALENDAR_CONFIG.clientId,
+        discoveryDocs: [GOOGLE_CALENDAR_CONFIG.discoveryDoc],
+        scope: GOOGLE_CALENDAR_CONFIG.scopes
       });
-    });
+    }
+
+    const authInstance = gapi.auth2.getAuthInstance();
+    // Rest of your function...
+  } catch (error) {
+    console.error('Error connecting to Google Calendar:', error);
+  }
 }
 
-// Mentee: Load progress (completed sessions)
-function loadProgress(menteeUid) {
-  db.collection('sessions')
-    .where('menteeId', '==', menteeUid)
-    .where('status', '==', 'accepted')
-    .get()
-    .then(snapshot => {
-      const container = document.getElementById('progress');
-      if (snapshot.empty) {
-        container.innerHTML = "<p>No completed sessions yet.</p>";
-        return;
-      }
-      container.innerHTML = '';
-      snapshot.forEach(doc => {
-        const session = doc.data();
-        container.innerHTML += `
-          <div class="progress-item">
-            <p><strong>Mentor:</strong> ${session.mentorName || session.mentorEmail}</p>
-            <p>Session completed!</p>
-          </div>
-        `;
-      });
-    });
+// Update calendar status and button state
+function updateCalendarStatus(message, type) {
+  const messageDiv = document.getElementById('message');
+  if (messageDiv) {
+    messageDiv.textContent = message;
+    messageDiv.className = type;
+  }
 }
 
-// Mentor: Accept/Reject session requests
-window.acceptRequest = function(sessionId) {
-  db.collection('sessions').doc(sessionId).update({ status: 'accepted' })
-    .then(() => {
-      document.getElementById('message').innerText = "Session accepted!";
-      loadMentorRequests(auth.currentUser.uid);
-      loadMentorAcceptedSessions(auth.currentUser.uid);
-    });
-};
-
-window.rejectRequest = function(sessionId) {
-  db.collection('sessions').doc(sessionId).update({ status: 'rejected' })
-    .then(() => {
-      document.getElementById('message').innerText = "Session rejected.";
-      loadMentorRequests(auth.currentUser.uid);
-      loadMentorAcceptedSessions(auth.currentUser.uid);
-    });
-};
-
-// Show accepted/upcoming sessions
-function loadMentorAcceptedSessions(mentorUid) {
-  db.collection('sessions')
-    .where('mentorId', '==', mentorUid)
-    .where('status', '==', 'accepted')
-    .get()
-    .then(snapshot => {
-      const container = document.getElementById('acceptedSessions');
-      if (snapshot.empty) {
-        container.innerHTML = "<p>No accepted sessions yet.</p>";
-        return;
-      }
-      container.innerHTML = '';
-      snapshot.forEach(doc => {
-        const session = doc.data();
-        container.innerHTML += `
-          <div class="accepted-session">
-            <p><strong>Mentee:</strong> ${session.menteeName || session.menteeId}</p>
-            <p><strong>Topic:</strong> ${session.topic || 'N/A'}</p>
-            <p><strong>Status:</strong> Accepted</p>
-            <form onsubmit="saveSessionNotes(event, '${doc.id}')">
-              <label for="notes-${doc.id}">Session Notes:</label>
-              <textarea id="notes-${doc.id}" rows="2">${session.notes || ''}</textarea>
-              <button type="submit" class="mentor-btn">Save Notes</button>
-            </form>
-            <button onclick="completeSession('${doc.id}')">Mark as Completed</button>
-          </div>
-        `;
-      });
-    });
+function updateConnectButtonState() {
+  const connectButton = document.getElementById('connectGoogleCalendar');
+  if (!connectButton) return;
+  
+  if (googleCalendarConnected) {
+    connectButton.textContent = 'Disconnect Google Calendar';
+    connectButton.classList.add('connected');
+  } else {
+    connectButton.textContent = 'Connect Google Calendar';
+    connectButton.classList.remove('connected');
+  }
 }
 
-window.completeSession = function(sessionId) {
-  db.collection('sessions').doc(sessionId).update({ status: 'completed' })
-    .then(() => {
-      document.getElementById('message').innerText = "Session marked as completed!";
-      loadMentorAcceptedSessions(firebase.auth().currentUser.uid);
-    });
-};
-
-// Render mentor profile edit section
+// Mentor profile edit functions (same as before)
 function renderMentorProfileEdit(profile) {
   const container = document.getElementById('mentorProfileEdit');
-  // Show only the button by default
+  if (!container) return;
+  
   container.innerHTML = `
-    <button id="showEditProfileBtn" class="mentor-btn" style="margin-bottom:1em;">Edit Profile</button>
+    <button id="showEditProfileBtn" class="mentor-btn">Edit Profile</button>
     <div id="mentorProfileFormContainer" style="display:none;"></div>
   `;
-
-  document.getElementById('showEditProfileBtn').addEventListener('click', function() {
-    showMentorProfileForm(profile);
-    this.style.display = "none";
-  });
+  
+  const editBtn = document.getElementById('showEditProfileBtn');
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      showMentorProfileForm(profile);
+      editBtn.style.display = 'none';
+    });
+  }
 }
 
 function showMentorProfileForm(profile) {
   const formContainer = document.getElementById('mentorProfileFormContainer');
-  formContainer.style.display = "block";
+  if (!formContainer) return;
+  
+  formContainer.style.display = 'block';
   formContainer.innerHTML = `
     <h3>Edit Your Profile</h3>
     <form id="mentorProfileForm">
-      <label for="mentorName">Name:</label>
-      <input type="text" id="mentorName" value="${profile.name || ''}" required>
-      <label for="mentorBio">Bio:</label>
-      <textarea id="mentorBio" rows="3" required>${profile.bio || ''}</textarea>
-      <label for="mentorSkills">Skills (comma separated):</label>
-      <input type="text" id="mentorSkills" value="${(profile.skills || []).join(', ')}" required>
-      <label for="mentorInterests">Interests:</label>
-      <input type="text" id="mentorInterests" value="${profile.interests || ''}" required>
-      <button type="submit" class="mentor-btn">Save Profile</button>
+      <label>Name:</label><input type="text" id="mentorName" value="${profile.name || ''}" required>
+      <label>Bio:</label><textarea id="mentorBio" rows="3">${profile.bio || ''}</textarea>
+      <label>Skills:</label><input type="text" id="mentorSkills" value="${(profile.skills || []).join(', ')}">
+      <label>Interests:</label><input type="text" id="mentorInterests" value="${profile.interests || ''}">
+      <button type="submit" class="mentor-btn">Save</button>
       <p id="mentorProfileMsg"></p>
     </form>
   `;
-
-  document.getElementById('mentorProfileForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('mentorName').value;
-    const bio = document.getElementById('mentorBio').value;
-    const skills = document.getElementById('mentorSkills').value.split(',').map(s => s.trim());
-    const interests = document.getElementById('mentorInterests').value;
-    db.collection('users').doc(firebase.auth().currentUser.uid).set({
-      name: name,
-      bio: bio,
-      skills: skills,
-      interests: interests
-    }, { merge: true })
-      .then(() => {
-        formContainer.innerHTML = `<p style="color:green;">Profile updated successfully!</p>`;
-        // Show the edit button again after a short delay
-        setTimeout(() => {
-          renderMentorProfileEdit({ name, bio, skills, interests });
-        }, 1500);
-      })
-      .catch(error => {
-        document.getElementById('mentorProfileMsg').innerText = error.message;
-      });
-  });
+  
+  const form = document.getElementById('mentorProfileForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      updateMentorProfile();
+    });
+  }
 }
 
-// Render mentor availability section after profile edit
+async function updateMentorProfile() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const formContainer = document.getElementById('mentorProfileFormContainer');
+  const msgElement = document.getElementById('mentorProfileMsg');
+  
+  try {
+    const data = {
+      name: document.getElementById('mentorName').value,
+      bio: document.getElementById('mentorBio').value,
+      skills: document.getElementById('mentorSkills').value.split(',').map(s => s.trim()),
+      interests: document.getElementById('mentorInterests').value
+    };
+    
+    await db.collection('users').doc(user.uid).set(data, { merge: true });
+    
+    if (formContainer) {
+      formContainer.innerHTML = `<p style='color:green;'>Profile updated!</p>`;
+      setTimeout(() => renderMentorProfileEdit(data), 1500);
+    }
+  } catch (err) {
+    if (msgElement) {
+      msgElement.textContent = 'Error: ' + err.message;
+    }
+  }
+}
+
+// Mentor Availability functions (same as before)
 function renderMentorAvailability() {
   const container = document.getElementById('mentorAvailability');
-  loadMentorAvailability();
+  if (!container) return;
+  
+  container.innerHTML = `
+    <h3>Add Availability</h3>
+    <form id="availabilityForm">
+      <input type="date" id="availableDate" required>
+      <input type="time" id="availableTime" required>
+      <button type="submit" class="mentor-btn">Add Slot</button>
+      <p id="availabilityMsg"></p>
+    </form>
+  `;
 
-  document.getElementById('availabilityForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const date = document.getElementById('availableDate').value;
-    const time = document.getElementById('availableTime').value;
-    const slot = { date, time };
-
-    // Save slot to Firestore under users/{uid}/availability
-    db.collection('users').doc(firebase.auth().currentUser.uid)
-      .collection('availability').add(slot)
-      .then(() => {
-        document.getElementById('availabilityMsg').innerText = "Slot added!";
-        loadMentorAvailability();
-      })
-      .catch(error => {
-        document.getElementById('availabilityMsg').innerText = error.message;
-      });
-  });
+  const form = document.getElementById('availabilityForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const date = document.getElementById('availableDate').value;
+      const time = document.getElementById('availableTime').value;
+      saveAvailability(date, time);
+    });
+  }
 }
 
-// Load and display mentor's available slots
-function loadMentorAvailability() {
+async function saveAvailability(date, time) {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  try {
+    await db.collection('availability').add({
+      date,
+      time,
+      mentorId: user.uid,
+      available: true,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    const msgElement = document.getElementById('availabilityMsg');
+    if (msgElement) {
+      msgElement.textContent = 'Slot added!';
+      msgElement.style.color = 'green';
+    }
+    
+    loadAvailabilitySlots();
+  } catch (err) {
+    const msgElement = document.getElementById('availabilityMsg');
+    if (msgElement) {
+      msgElement.textContent = 'Error: ' + err.message;
+      msgElement.style.color = 'red';
+    }
+  }
+}
+
+async function loadAvailabilitySlots() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
   const list = document.getElementById('availabilityList');
-  list.innerHTML = '';
-  db.collection('users').doc(firebase.auth().currentUser.uid)
-    .collection('availability').get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        list.innerHTML = "<li>No available slots yet.</li>";
+  if (!list) return;
+
+  try {
+    const snapshot = await db.collection('availability')
+      .where('mentorId', '==', user.uid)
+      .where('available', '==', true)
+      .orderBy('timestamp', 'desc')
+      .get();
+
+    list.innerHTML = '';
+    
+    if (snapshot.empty) {
+      list.innerHTML = '<li>No availability slots yet.</li>';
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const slot = doc.data();
+      const li = document.createElement('li');
+      li.dataset.datetime = `${slot.date}T${slot.time}`;
+      li.innerHTML = `
+        ${slot.date} at ${slot.time} 
+        <button onclick="removeAvailability('${doc.id}')" class="mentor-btn small-btn">Remove</button>
+      `;
+      list.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Error loading availability slots:', error);
+  }
+}
+
+async function removeAvailability(slotId) {
+  try {
+    await db.collection('availability').doc(slotId).update({ available: false });
+    loadAvailabilitySlots();
+  } catch (error) {
+    console.error('Error removing availability slot:', error);
+    const msgElement = document.getElementById('availabilityMsg');
+    if (msgElement) {
+      msgElement.textContent = 'Error removing slot';
+      msgElement.style.color = 'red';
+    }
+  }
+}
+
+// Session management functions
+async function loadSessionRequests() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const container = document.getElementById('sessionRequests');
+  if (!container) return;
+
+  try {
+    const snapshot = await db.collection('sessions')
+      .where('mentorId', '==', user.uid)
+      .where('status', '==', 'pending')
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    container.innerHTML = '';
+    
+    if (snapshot.empty) {
+      container.innerHTML = '<p>No session requests.</p>';
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const session = doc.data();
+      const div = document.createElement('div');
+      div.className = 'session-request';
+      div.innerHTML = `
+        <h4>${session.menteeName}</h4>
+        <p>Topic: ${session.topic}</p>
+        <p>Date: ${session.date}</p>
+        <p>Time: ${session.time}</p>
+        <p>${session.message || ''}</p>
+        <button onclick="acceptSessionWithCalendar('${doc.id}', ${escapeJsonForHtml(session)})" class="mentor-btn">
+          Accept
+        </button>
+        <button onclick="rejectSession('${doc.id}')" class="mentor-btn reject-btn">
+          Reject
+        </button>
+      `;
+      container.appendChild(div);
+    });
+  } catch (error) {
+    console.error('Error loading session requests:', error);
+    container.innerHTML = '<p>Error loading requests.</p>';
+  }
+}
+
+function escapeJsonForHtml(obj) {
+  return JSON.stringify(obj).replace(/"/g, '&quot;');
+}
+
+async function loadAcceptedSessions() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const container = document.getElementById('acceptedSessions');
+  if (!container) return;
+
+  try {
+    const snapshot = await db.collection('sessions')
+      .where('mentorId', '==', user.uid)
+      .where('status', '==', 'accepted')
+      .orderBy('date')
+      .orderBy('time')
+      .get();
+
+    container.innerHTML = '';
+    
+    if (snapshot.empty) {
+      container.innerHTML = '<p>No accepted sessions.</p>';
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const session = doc.data();
+      const div = document.createElement('div');
+      div.className = 'accepted-session';
+      div.innerHTML = `
+        <h4>Session with ${session.menteeName}</h4>
+        <p>Topic: ${session.topic}</p>
+        <p>${session.date} at ${session.time}</p>
+        <p>Email: ${session.menteeEmail}</p>
+        ${session.calendarEventId ? `<p>Added to Google Calendar</p>` : ''}
+      `;
+      container.appendChild(div);
+    });
+  } catch (error) {
+    console.error('Error loading accepted sessions:', error);
+    container.innerHTML = '<p>Error loading sessions.</p>';
+  }
+}
+
+async function acceptSessionWithCalendar(sessionId, sessionData) {
+  if (!googleCalendarConnected) {
+    return acceptSession(sessionId);
+  }
+
+  try {
+    // Check for calendar conflicts first
+    const startTime = new Date(`${sessionData.date}T${sessionData.time}`).toISOString();
+    const endTime = new Date(new Date(startTime).getTime() + 60 * 60 * 1000).toISOString(); // 1 hour session
+    
+    const hasConflict = await checkCalendarConflicts(startTime, endTime);
+    
+    if (hasConflict) {
+      const userConfirm = confirm('You have a calendar conflict at this time. Do you want to accept anyway?');
+      if (!userConfirm) {
+        updateCalendarStatus('Session not accepted due to calendar conflict', 'warning');
         return;
       }
-      snapshot.forEach(doc => {
-        const slot = doc.data();
-        const li = document.createElement('li');
-        li.textContent = `${slot.date} at ${slot.time}`;        // In loadMentorRequests and loadMentorAcceptedSessions, add more fields:
-        div.innerHTML = `
-          <p><strong>Mentee:</strong> ${req.menteeName || req.menteeId}</p>
-          <p><strong>Topic:</strong> ${req.topic || 'N/A'}</p>
-          <p><strong>Message:</strong> ${req.message || ''}</p>
-          <button onclick="acceptRequest('${doc.id}')">Accept</button>
-          <button onclick="rejectRequest('${doc.id}')">Reject</button>
-        `;
-        list.appendChild(li);
+    }
+
+    // Accept the session
+    await acceptSession(sessionId);
+
+    // Create calendar event
+    try {
+      const calendarEvent = await createCalendarEvent({
+        sessionId: sessionId,
+        menteeName: sessionData.menteeName,
+        menteeEmail: sessionData.menteeEmail,
+        topic: sessionData.topic,
+        startTime: startTime,
+        endTime: endTime
       });
-    });
+
+      // Store calendar event ID with session
+      await db.collection('sessions').doc(sessionId).update({
+        calendarEventId: calendarEvent.id
+      });
+
+      updateCalendarStatus('Session accepted and added to Google Calendar', 'success');
+    } catch (calendarError) {
+      console.error('Error adding to calendar:', calendarError);
+      updateCalendarStatus('Session accepted but failed to add to calendar', 'warning');
+    }
+  } catch (error) {
+    console.error('Error accepting session:', error);
+    updateCalendarStatus('Error accepting session', 'error');
+  }
 }
 
-window.saveSessionNotes = function(event, sessionId) {
-  event.preventDefault();
-  const notes = document.getElementById(`notes-${sessionId}`).value;
-  db.collection('sessions').doc(sessionId).update({ notes: notes })
-    .then(() => {
-      document.getElementById('message').innerText = "Session notes saved!";
+async function acceptSession(sessionId) {
+  try {
+    await db.collection('sessions').doc(sessionId).update({ status: 'accepted' });
+    loadSessionRequests();
+    loadAcceptedSessions();
+  } catch (error) {
+    console.error('Error accepting session:', error);
+    throw error;
+  }
+}
+
+async function rejectSession(sessionId) {
+  try {
+    await db.collection('sessions').doc(sessionId).update({ status: 'rejected' });
+    loadSessionRequests();
+    updateCalendarStatus('Session rejected', 'info');
+  } catch (error) {
+    console.error('Error rejecting session:', error);
+    updateCalendarStatus('Error rejecting session', 'error');
+  }
+}
+
+// Google Calendar functions
+async function createCalendarEvent(sessionData) {
+  if (!googleCalendarConnected) {
+    throw new Error('Google Calendar not connected');
+  }
+
+  try {
+    const event = {
+      summary: `Mentoring Session with ${sessionData.menteeName || 'Mentee'}`,
+      description: `Mentoring session scheduled through platform.\n\nMentee: ${sessionData.menteeName || 'Not specified'}\nTopic: ${sessionData.topic || 'General mentoring'}\nSession ID: ${sessionData.sessionId || 'N/A'}`,
+      start: {
+        dateTime: sessionData.startTime,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      end: {
+        dateTime: sessionData.endTime,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      attendees: sessionData.menteeEmail ? [
+        { email: sessionData.menteeEmail }
+      ] : [],
+      reminders: {
+        useDefault: false,
+        overrides: [
+          { method: 'email', minutes: 24 * 60 }, // 24 hours
+          { method: 'popup', minutes: 30 }       // 30 minutes
+        ]
+      }
+    };
+
+    const response = await gapi.client.calendar.events.insert({
+      calendarId: 'primary',
+      resource: event
+    });
+
+    return response.result;
+  } catch (error) {
+    console.error('Error creating calendar event:', error);
+    throw error;
+  }
+}
+
+async function checkCalendarConflicts(startTime, endTime) {
+  if (!googleCalendarConnected) return false;
+
+  try {
+    const response = await gapi.client.calendar.events.list({
+      calendarId: 'primary',
+      timeMin: startTime,
+      timeMax: endTime,
+      singleEvents: true,
+      showDeleted: false
+    });
+
+    // Filter out declined events and transparent events
+    const conflictingEvents = response.result.items.filter(event => {
+      return event.transparency !== 'transparent' && 
+             !event.attendees?.some(attendee => attendee.self && attendee.responseStatus === 'declined');
+    });
+
+    return conflictingEvents.length > 0;
+  } catch (error) {
+    console.error('Error checking calendar conflicts:', error);
+    return false;
+  }
+}
+
+// Sync availability with Google Calendar
+async function syncAvailabilityWithCalendar() {
+  if (!googleCalendarConnected) {
+    alert('Please connect to Google Calendar first');
+    return;
+  }
+
+  const availabilityList = document.getElementById('availabilityList');
+  if (!availabilityList) return;
+
+  const slots = availabilityList.children;
+  if (slots.length === 0) return;
+
+  const syncBtn = document.getElementById('syncCalendarBtn');
+  const originalText = syncBtn?.textContent;
+  
+  if (syncBtn) {
+    syncBtn.textContent = 'Syncing...';
+    syncBtn.disabled = true;
+  }
+
+  try {
+    for (let slot of slots) {
+      const slotData = slot.dataset;
+      if (!slotData.datetime) continue;
+
+      const startTime = new Date(slotData.datetime).toISOString();
+      const endTime = new Date(new Date(slotData.datetime).getTime() + 60 * 60 * 1000).toISOString();
+
+      // Check if this slot conflicts with existing events
+      const hasConflict = await checkCalendarConflicts(startTime, endTime);
+      
+      if (hasConflict) {
+        slot.classList.add('conflict');
+        let conflictIndicator = slot.querySelector('.conflict-indicator');
+        if (!conflictIndicator) {
+          conflictIndicator = document.createElement('span');
+          conflictIndicator.className = 'conflict-indicator';
+          conflictIndicator.textContent = '⚠️ Calendar conflict';
+          slot.appendChild(conflictIndicator);
+        }
+      } else {
+        slot.classList.remove('conflict');
+        const conflictIndicator = slot.querySelector('.conflict-indicator');
+        if (conflictIndicator) conflictIndicator.remove();
+      }
+    }
+  } catch (error) {
+    console.error('Error syncing availability:', error);
+    updateCalendarStatus('Error syncing with Google Calendar', 'error');
+  } finally {
+    if (syncBtn) {
+      syncBtn.textContent = originalText;
+      syncBtn.disabled = false;
+    }
+  }
+}
+
+// Mentee functions
+function loadMenteeRequests(uid) {
+  const container = document.getElementById('menteeRequests');
+  if (!container) return;
+
+  db.collection('sessions').where('menteeId', '==', uid).get()
+    .then(snapshot => {
+      container.innerHTML = '';
+      if (snapshot.empty) {
+        container.innerHTML = '<p>No requests.</p>';
+        return;
+      }
+      
+      snapshot.forEach(doc => {
+        const s = doc.data();
+        container.innerHTML += `
+          <div class="mentee-request">
+            <p><strong>Mentor:</strong> ${s.mentorName}</p>
+            <p><strong>Status:</strong> <span class="status-${s.status}">${s.status}</span></p>
+            <p><strong>Topic:</strong> ${s.topic}</p>
+          </div>
+        `;
+      });
     })
     .catch(error => {
-      document.getElementById('message').innerText = error.message;
+      console.error('Error loading mentee requests:', error);
+      container.innerHTML = '<p>Error loading requests.</p>';
     });
-};
+}
 
-// Replace with your own client ID from Google Cloud Console
-const CLIENT_ID = '859355606739-l3rh70n05cbn3dldoe8fph1hvgj2qqc1.apps.googleusercontent.coma';
-const API_KEY = 'AIzaSyB1jMemuHL99Ac9Xtk18D34v8in0fzQOZ8';
-const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
-const SCOPES = "https://www.googleapis.com/auth/calendar.events";
+function loadProgress(uid) {
+  const container = document.getElementById('progress');
+  if (!container) return;
 
-function initClient() {
-  gapi.client.init({
-    apiKey: API_KEY,
-    clientId: CLIENT_ID,
-    discoveryDocs: DISCOVERY_DOCS,
-    scope: SCOPES
-  }).then(() => {
-    // Sign in and show status
-    gapi.auth2.getAuthInstance().signIn().then(() => {
-      document.getElementById('calendarStatus').innerText = "Google Calendar connected!";
-      showAddEventForm();
+  db.collection('sessions')
+    .where('menteeId', '==', uid)
+    .where('status', '==', 'accepted')
+    .get()
+    .then(snapshot => {
+      container.innerHTML = '';
+      if (snapshot.empty) {
+        container.innerHTML = '<p>No progress yet.</p>';
+        return;
+      }
+      
+      snapshot.forEach(doc => {
+        const s = doc.data();
+        container.innerHTML += `
+          <div class="progress-item">
+            <p><strong>Mentor:</strong> ${s.mentorName}</p>
+            <p><strong>Completed:</strong> ${s.date}</p>
+          </div>
+        `;
+      });
+    })
+    .catch(error => {
+      console.error('Error loading progress:', error);
+      container.innerHTML = '<p>Error loading progress.</p>';
     });
+}
+
+// Logout function
+function logout() {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "index.html";
   });
 }
 
-function showAddEventForm() {
-  // Simple form for demo; you can improve this UI
-  document.getElementById('calendarStatus').innerHTML += `
-    <form id="addEventForm" style="margin-top:1em;">
-      <label>Event Title: <input type="text" id="eventTitle" required></label><br>
-      <label>Date: <input type="date" id="eventDate" required></label><br>
-      <label>Time: <input type="time" id="eventTime" required></label><br>
-      <button type="submit" class="mentor-btn">Add to Google Calendar</button>
-    </form>
-    <div id="eventResult"></div>
-  `;
-  document.getElementById('addEventForm').onsubmit = function(e) {
-    e.preventDefault();
-    addEventToGoogleCalendar();
-  };
-}
-
-function addEventToGoogleCalendar() {
-  const title = document.getElementById('eventTitle').value;
-  const date = document.getElementById('eventDate').value;
-  const time = document.getElementById('eventTime').value;
-  const startDateTime = new Date(`${date}T${time}:00`);
-  const endDateTime = new Date(startDateTime.getTime() + 60*60*1000); // 1 hour
-
-  const event = {
-    summary: title,
-    start: { dateTime: startDateTime.toISOString() },
-    end: { dateTime: endDateTime.toISOString() },
-    conferenceData: {
-      createRequest: { requestId: Math.random().toString(36).substring(2) }
-    }
-  };
-
-  gapi.client.calendar.events.insert({
-    calendarId: 'primary',
-    resource: event,
-    conferenceDataVersion: 1
-  }).then(response => {
-    const meetLink = response.result.hangoutLink || "No Meet link generated";
-    document.getElementById('eventResult').innerHTML = `
-      <p style="color:green;">Event created! Google Meet link: <a href="${meetLink}" target="_blank">${meetLink}</a></p>
-    `;
-  }, err => {
-    document.getElementById('eventResult').innerText = "Error: " + err.result.error.message;
-  });
-}
+// Make functions available globally
+window.acceptSessionWithCalendar = acceptSessionWithCalendar;
+window.acceptSession = acceptSession;
+window.rejectSession = rejectSession;
+window.removeAvailability = removeAvailability;
+window.logout = logout;

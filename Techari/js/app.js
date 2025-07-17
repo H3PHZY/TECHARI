@@ -3,19 +3,28 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-
-    // Set up event listeners for login and registration buttons
-    document.getElementById('loginButton').addEventListener('click', login);
-    document.getElementById('registerButton').addEventListener('click', register);
 });
+
+// Expose login and register to global scope for HTML onclick
+window.login = login;
+window.register = register;
 
 // Function to handle user login
 function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(() => {
-      window.location.href = "dashboard.html"; // Go to dashboard after login
+    .then(async () => {
+      const user = firebase.auth().currentUser;
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      const profile = userDoc.data();
+      if (profile.role === "mentor") {
+        window.location.href = "mentor-dashboard.html";
+      } else if (profile.role === "mentee") {
+        window.location.href = "mentee-dashboard.html";
+      } else {
+        window.location.href = "index.html"; // fallback
+      }
     })
     .catch(error => {
       document.getElementById('message').innerText = error.message;
