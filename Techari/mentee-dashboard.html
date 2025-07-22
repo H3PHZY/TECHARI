@@ -848,62 +848,413 @@
 
     <script>
         // Sample mentor data
-        const mentors = [
-            {
-                name: "Sarah Chen",
-                role: "Senior Frontend Developer at Google",
-                avatar: "SC",
-                skills: ["React", "JavaScript", "TypeScript", "CSS"],
-                bio: "5+ years in frontend development. Passionate about mentoring women in tech.",
-                availability: "Evenings & Weekends",
-                rating: 4.9
-            },
-            {
-                name: "Maria Rodriguez",
-                role: "Engineering Manager at Microsoft",
-                avatar: "MR",
-                skills: ["Leadership", "Career Growth", "Full Stack", "Team Management"],
-                bio: "Leading teams of 15+ developers. Love helping others navigate their tech careers.",
-                availability: "Flexible",
-                rating: 4.8
-            },
-            {
-                name: "Alex Kim",
-                role: "Full Stack Developer at Stripe",
-                avatar: "AK",
-                skills: ["JavaScript", "Node.js", "Python", "MongoDB"],
-                bio: "Full stack developer with expertise in modern web technologies. Patient teacher.",
-                availability: "Mornings & Afternoons",
-                rating: 4.7
-            },
-            {
-                name: "Lisa Wang",
-                role: "UX Designer at Adobe",
-                avatar: "LW",
-                skills: ["UI/UX Design", "Figma", "User Research", "Prototyping"],
-                bio: "Design systems expert. Helping designers transition into tech leadership roles.",
-                availability: "Evenings",
-                rating: 4.9
-            },
-            {
-                name: "Jennifer Park",
-                role: "Data Scientist at Netflix",
-                avatar: "JP",
-                skills: ["Python", "Machine Learning", "Data Analysis", "SQL"],
-                bio: "PhD in Computer Science. Passionate about making data science accessible.",
-                availability: "Weekends",
-                rating: 4.8
-            },
-            {
-                name: "Amanda Foster",
-                role: "DevOps Engineer at Amazon",
-                avatar: "AF",
-                skills: ["AWS", "Docker", "Kubernetes", "CI/CD"],
-                bio: "Cloud infrastructure specialist. Love teaching others about DevOps practices.",
-                availability: "Flexible",
-                rating: 4.6
-            }
-        ];
+const mentors = [
+  {
+    name: "Kwame Mensah",
+    role: "Full Stack Developer at Flutterwave",
+    avatar: "KM",
+    skills: ["JavaScript", "Node.js", "React", "MongoDB"],
+    bio: "Passionate about building scalable web apps and mentoring junior developers.",
+    availability: "Evenings (WAT)",
+    rating: 4.8
+  },
+  {
+    name: "Zainab Yusuf",
+    role: "Data Scientist at Andela",
+    avatar: "ZY",
+    skills: ["Python", "Pandas", "Machine Learning", "SQL"],
+    bio: "Helping African startups harness data for decision-making.",
+    availability: "Weekends",
+    rating: 4.7
+  },
+  {
+    name: "Munya Dube",
+    role: "DevOps Engineer at Liquid Telecom",
+    avatar: "MD",
+    skills: ["Docker", "Kubernetes", "Jenkins", "Linux"],
+    bio: "From deployment pipelines to cloud infrastructure, I simplify DevOps.",
+    availability: "Flexible",
+    rating: 4.5
+  },
+  {
+    name: "Amina Bello",
+    role: "UI/UX Designer at Paystack",
+    avatar: "AB",
+    skills: ["Figma", "Prototyping", "Design Thinking", "Usability Testing"],
+    bio: "User-obsessed designer creating delightful digital experiences.",
+    availability: "Afternoons",
+    rating: 4.9
+  },
+  {
+    name: "Thulani Moyo",
+    role: "Backend Engineer at Safaricom",
+    avatar: "TM",
+    skills: ["Java", "Spring Boot", "REST APIs", "PostgreSQL"],
+    bio: "I help build robust APIs and mentor new backend developers.",
+    availability: "Mornings (EAT)",
+    rating: 4.6
+  },
+  {
+    name: "Fatou Diop",
+    role: "Cybersecurity Analyst at Orange Senegal",
+    avatar: "FD",
+    skills: ["Network Security", "Ethical Hacking", "SOC", "Firewalls"],
+    bio: "Helping protect African tech from digital threats.",
+    availability: "Evenings",
+    rating: 4.8
+  },
+  {
+    name: "Chinedu Okonkwo",
+    role: "AI Researcher at University of Lagos",
+    avatar: "CO",
+    skills: ["Deep Learning", "NLP", "TensorFlow", "Python"],
+    bio: "Bringing AI closer to education and African research.",
+    availability: "Flexible",
+    rating: 4.7
+  },
+  {
+    name: "Lebo Ndlovu",
+    role: "Product Manager at Yoco",
+    avatar: "LN",
+    skills: ["Agile", "Scrum", "User Stories", "Roadmaps"],
+    bio: "I turn ideas into real products that solve user pain points.",
+    availability: "Weekends",
+    rating: 4.5
+  },
+  {
+    name: "Salim Abdi",
+    role: "Mobile Developer at M-Pesa",
+    avatar: "SA",
+    skills: ["Flutter", "Dart", "Android", "Firebase"],
+    bio: "Helping startups deliver seamless mobile experiences.",
+    availability: "Flexible",
+    rating: 4.9
+  },
+  {
+    name: "Nadia Rachid",
+    role: "Frontend Engineer at Jumia",
+    avatar: "NR",
+    skills: ["Vue.js", "HTML/CSS", "JavaScript", "TypeScript"],
+    bio: "Front-end enthusiast making African e-commerce intuitive.",
+    availability: "Afternoons",
+    rating: 4.6
+  },
+  {
+    name: "Moses Wambua",
+    role: "Cloud Engineer at Microsoft Africa",
+    avatar: "MW",
+    skills: ["Azure", "CI/CD", "Terraform", "Containers"],
+    bio: "Helping African businesses scale with the cloud.",
+    availability: "Evenings",
+    rating: 4.8
+  },
+  {
+    name: "Rose Atieno",
+    role: "Tech Coach at ALX Africa",
+    avatar: "RA",
+    skills: ["Mentorship", "Career Coaching", "Leadership", "Soft Skills"],
+    bio: "Supporting the next generation of African tech leaders.",
+    availability: "Flexible",
+    rating: 4.9
+  },
+  {
+    name: "Ibrahim Sowe",
+    role: "Machine Learning Engineer at Baobab Group",
+    avatar: "IS",
+    skills: ["Scikit-learn", "ML Ops", "Pandas", "Data Visualization"],
+    bio: "Bringing AI to solve real-world African challenges.",
+    availability: "Mornings",
+    rating: 4.7
+  },
+  {
+    name: "Mariam Toure",
+    role: "Software Tester at Wave",
+    avatar: "MT",
+    skills: ["Manual Testing", "Selenium", "Bug Reporting", "JIRA"],
+    bio: "I love breaking software to make it better.",
+    availability: "Afternoons",
+    rating: 4.4
+  },
+  {
+    name: "Yusuf Kone",
+    role: "Blockchain Developer at Mara",
+    avatar: "YK",
+    skills: ["Solidity", "Smart Contracts", "Ethereum", "Web3.js"],
+    bio: "Working on decentralized finance solutions for Africa.",
+    availability: "Evenings",
+    rating: 4.8
+  },
+  {
+    name: "Tariro Chikafu",
+    role: "Frontend Engineer at ZimSwitch",
+    avatar: "TC",
+    skills: ["React", "Next.js", "CSS", "Redux"],
+    bio: "Zimbabwean code artist building sleek user interfaces.",
+    availability: "Weekends",
+    rating: 4.7
+  },
+  {
+    name: "Josephine Muthoni",
+    role: "AI Ethics Researcher at Mozilla Africa",
+    avatar: "JM",
+    skills: ["AI Ethics", "Policy", "Data Privacy", "Python"],
+    bio: "Tech should serve everyone. I bridge AI and fairness.",
+    availability: "Flexible",
+    rating: 4.9
+  },
+  {
+    name: "Sekou Diallo",
+    role: "Backend Engineer at Interswitch",
+    avatar: "SD",
+    skills: ["Node.js", "SQL", "APIs", "Security"],
+    bio: "Lover of clean code and bulletproof backend logic.",
+    availability: "Mornings",
+    rating: 4.6
+  },
+  {
+    name: "Lilian Makuya",
+    role: "QA Analyst at MTN South Africa",
+    avatar: "LM",
+    skills: ["Selenium", "JIRA", "Agile Testing", "Postman"],
+    bio: "I break things so you don’t have to.",
+    availability: "Evenings",
+    rating: 4.4
+  },
+  {
+    name: "Hamza El Amin",
+    role: "ML Engineer at InstaDeep Tunisia",
+    avatar: "HA",
+    skills: ["PyTorch", "NLP", "Model Tuning", "Python"],
+    bio: "Engineer by day, AI wizard by night.",
+    availability: "Afternoons",
+    rating: 4.8
+  },
+  {
+    name: "Ngozi Okafor",
+    role: "Tech Policy Consultant at AfriLabs",
+    avatar: "NO",
+    skills: ["Tech Policy", "Regulations", "Open Data", "Advocacy"],
+    bio: "Pushing for inclusive digital policy in Africa.",
+    availability: "Flexible",
+    rating: 4.9
+  },
+  {
+    name: "Koffi Mensah",
+    role: "Software Engineer at Taptap Send",
+    avatar: "KM",
+    skills: ["Django", "REST APIs", "Microservices", "PostgreSQL"],
+    bio: "Togolese builder of reliable systems and APIs.",
+    availability: "Evenings",
+    rating: 4.5
+  },
+  {
+    name: "Naledi Kgafela",
+    role: "Product Designer at M-KOPA",
+    avatar: "NK",
+    skills: ["User Research", "Wireframing", "Prototyping", "Figma"],
+    bio: "Design is empathy made visible.",
+    availability: "Mornings",
+    rating: 4.7
+  },
+  {
+    name: "Ahmed Abukar",
+    role: "Systems Administrator at SomaliNet",
+    avatar: "AA",
+    skills: ["Linux", "Server Management", "Networking", "DevOps"],
+    bio: "Helping African orgs stay online 24/7.",
+    availability: "Flexible",
+    rating: 4.6
+  },
+  {
+    name: "Nana Adjei",
+    role: "Mobile App Developer at Hubtel",
+    avatar: "NA",
+    skills: ["Kotlin", "Android Studio", "MVVM", "Firebase"],
+    bio: "Let’s bring your app idea to life.",
+    availability: "Weekends",
+    rating: 4.8
+  },
+  {
+    name: "Tsitsi Ndlovu",
+    role: "Data Analyst at Old Mutual Zimbabwe",
+    avatar: "TN",
+    skills: ["Excel", "Power BI", "SQL", "Data Cleaning"],
+    bio: "Stories lie in the data—I help you find them.",
+    availability: "Afternoons",
+    rating: 4.5
+  },
+  {
+    name: "Boubacar Camara",
+    role: "Blockchain Researcher at Web3Africa",
+    avatar: "BC",
+    skills: ["Solidity", "Smart Contracts", "DeFi", "Blockchain Protocols"],
+    bio: "Exploring how decentralized systems empower Africans.",
+    availability: "Flexible",
+    rating: 4.7
+  },
+  {
+    name: "Fikile Mokoena",
+    role: "Cloud Architect at Dimension Data",
+    avatar: "FM",
+    skills: ["AWS", "Azure", "Cloud Security", "Infrastructure as Code"],
+    bio: "I help businesses migrate and thrive in the cloud.",
+    availability: "Mornings",
+    rating: 4.9
+  },
+  {
+    name: "Omar Gaye",
+    role: "Digital Marketer & Tech Coach at YALI Dakar",
+    avatar: "OG",
+    skills: ["SEO", "Social Media", "Digital Strategy", "Mentorship"],
+    bio: "Tech + people = transformation. I love both.",
+    availability: "Evenings",
+    rating: 4.6
+  },
+  {
+    name: "Zahara Abebe",
+    role: "Junior Software Engineer at Gebeya",
+    avatar: "ZA",
+    skills: ["HTML", "CSS", "JavaScript", "GitHub"],
+    bio: "Just started my journey, eager to grow & give back.",
+    availability: "Weekends",
+    rating: 4.3
+  },
+  {
+    name: "Fatou Binta Sow",
+    role: "UX Researcher at Andela",
+    avatar: "FBS",
+    skills: ["User Research", "Usability Testing", "Interviews", "Persona Design"],
+    bio: "Design without research is guesswork. I help teams build what people truly need.",
+    availability: "Afternoons",
+    rating: 4.8
+  },
+  {
+    name: "Chinedu Eze",
+    role: "Cybersecurity Analyst at CyberSafe Foundation",
+    avatar: "CE",
+    skills: ["Pen Testing", "Network Security", "Ethical Hacking", "Awareness Training"],
+    bio: "Passionate about building a safer African cyberspace.",
+    availability: "Evenings",
+    rating: 4.9
+  },
+  {
+    name: "Wairimu Nduta",
+    role: "Product Manager at Twiga Foods",
+    avatar: "WN",
+    skills: ["Agile", "Product Strategy", "MVPs", "Stakeholder Management"],
+    bio: "I connect tech with real-world problems, especially in food systems.",
+    availability: "Flexible",
+    rating: 4.7
+  },
+  {
+    name: "Moussa Traoré",
+    role: "Data Engineer at mPharma",
+    avatar: "MT",
+    skills: ["ETL Pipelines", "Data Lakes", "SQL", "Apache Airflow"],
+    bio: "West African data wrangler. I turn messy data into gold.",
+    availability: "Weekends",
+    rating: 4.6
+  },
+  {
+    name: "Lindiwe Dlamini",
+    role: "AI Educator at Zindi Africa",
+    avatar: "LD",
+    skills: ["Machine Learning", "Data Science", "Mentorship", "Scikit-learn"],
+    bio: "Training the next wave of African AI talent.",
+    availability: "Mornings",
+    rating: 4.8
+  },
+  {
+    name: "Kwame Boateng",
+    role: "Mobile Dev Lead at mPedigree",
+    avatar: "KB",
+    skills: ["Flutter", "Dart", "Android/iOS", "Firebase"],
+    bio: "I build mobile apps that save lives & solve problems.",
+    availability: "Evenings",
+    rating: 4.6
+  },
+  {
+    name: "Safiya Idris",
+    role: "Software Engineer at Paystack",
+    avatar: "SI",
+    skills: ["Laravel", "Vue.js", "MySQL", "API Design"],
+    bio: "Northern Nigerian dev — I love full-stack adventures.",
+    availability: "Flexible",
+    rating: 4.7
+  },
+  {
+    name: "Jean-Pierre Mutabazi",
+    role: "Tech Lead at Rwanda Coding Academy",
+    avatar: "JPM",
+    skills: ["Python", "C++", "Embedded Systems", "Mentorship"],
+    bio: "Building the next generation of African tech leaders.",
+    availability: "Afternoons",
+    rating: 4.9
+  },
+  {
+    name: "Amara Mbele",
+    role: "Game Developer at MaliGames Studio",
+    avatar: "AM",
+    skills: ["Unity", "C#", "Game Mechanics", "2D/3D Design"],
+    bio: "Gaming can change minds. I build playable stories.",
+    availability: "Weekends",
+    rating: 4.5
+  },
+  {
+    name: "Zubairu Bello",
+    role: "Cloud Solutions Architect at Google Africa",
+    avatar: "ZB",
+    skills: ["GCP", "Terraform", "Cloud Security", "Kubernetes"],
+    bio: "Helping African startups scale fearlessly in the cloud.",
+    availability: "Evenings",
+    rating: 4.8
+  },
+  {
+    name: "Tebogo Mahlangu",
+    role: "IoT Engineer at SmartFarm SA",
+    avatar: "TM",
+    skills: ["Raspberry Pi", "Arduino", "Sensor Networks", "Python"],
+    bio: "Making agriculture smarter, one sensor at a time.",
+    availability: "Flexible",
+    rating: 4.6
+  },
+  {
+    name: "Hadiza Umar",
+    role: "Full Stack Developer at ALX Africa",
+    avatar: "HU",
+    skills: ["React", "Node.js", "MongoDB", "DevOps"],
+    bio: "Code is poetry. Let’s write it well together.",
+    availability: "Weekends",
+    rating: 4.7
+  },
+  {
+    name: "Mohamed El-Tayeb",
+    role: "Data Scientist at Orange Egypt",
+    avatar: "MET",
+    skills: ["R", "Power BI", "Big Data", "Predictive Modeling"],
+    bio: "Data science should tell a story. I help you write it.",
+    availability: "Mornings",
+    rating: 4.9
+  },
+  {
+    name: "Adama Diop",
+    role: "Front-End Mentor at SheCodes Senegal",
+    avatar: "AD",
+    skills: ["HTML", "CSS", "JavaScript", "Responsive Design"],
+    bio: "Helping young women in West Africa break into tech.",
+    availability: "Afternoons",
+    rating: 4.8
+  },
+  {
+    name: "Namukolo Chisanga",
+    role: "Tech & Inclusion Advocate at BongoHive Zambia",
+    avatar: "NC",
+    skills: ["Tech4Good", "Inclusive Design", "Community Building", "Workshop Facilitation"],
+    bio: "Tech is only powerful when it's inclusive. That’s my mission.",
+    availability: "Flexible",
+    rating: 4.7
+  }
+];
 
         let currentMentor = null;
 
