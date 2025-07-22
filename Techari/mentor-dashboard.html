@@ -4,77 +4,1201 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mentor Dashboard | Techari</title>
-  <link rel="stylesheet" href="css/mentor-dashboard.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: white;
+      border-bottom: 1px solid #e9ecef;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #8B5CF6, #A855F7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .brand-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+      margin-left: 0.5rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mentor-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #8B5CF6, #A855F7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .mentor-details h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .mentor-details p {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* Navigation */
+    .nav-bar {
+      display: flex;
+      gap: 0;
+      background: white;
+      border-bottom: 1px solid #e9ecef;
+      padding: 0 2rem;
+    }
+
+    .nav-tab {
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .nav-tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .nav-tab:hover:not(.active) {
+      color: #333;
+    }
+
+    /* Main Dashboard */
+    .dashboard {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .welcome-section {
+      margin-bottom: 2rem;
+    }
+
+    .welcome-section h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-section p {
+      color: #666;
+      font-size: 1rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+
+    .stat-title {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+
+    .stat-card:nth-child(1) .stat-value { color: #8B5CF6; }
+    .stat-card:nth-child(2) .stat-value { color: #8B5CF6; }
+    .stat-card:nth-child(3) .stat-value { color: #8B5CF6; }
+    .stat-card:nth-child(4) .stat-value { color: #8B5CF6; }
+
+    /* Quick Actions */
+    .quick-actions {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    .actions-grid {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #8B5CF6, #A855F7);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Mentorship Tip */
+    .tip-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      border-left: 4px solid #f093fb;
+      border: 1px solid #e9ecef;
+      margin-bottom: 2rem;
+    }
+
+    .tip-section h3 {
+      color: #333;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .tip-section p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Content Sections */
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    /* Requests Section */
+    .requests-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .request-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .request-info h4 {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .request-info p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-accept {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .btn-decline {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Sessions Section */
+    .sessions-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .session-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+    }
+
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .session-date {
+      background: #667eea;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    /* Availability Section */
+    .availability-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .day-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+      text-align: center;
+    }
+
+    .day-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .time-slot {
+      background: #f8f9fa;
+      padding: 0.5rem;
+      border-radius: 6px;
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .time-slot.available {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        padding: 1rem;
+      }
+
+      .dashboard {
+        padding: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      .actions-grid {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="header">
     <div class="header-left">
-      <div class="logo-icon"><i class="lucide lucide-heart"></i></div>
+      <div class="logo">T</div>
       <h1 class="brand-name">Techari</h1>
     </div>
     <div class="header-right">
-      <button class="icon-btn"><i class="lucide lucide-bell"></i></button>
-      <button class="icon-btn"><i class="lucide lucide-settings"></i></button>
       <div class="mentor-info">
-        <div class="avatar"><i class="lucide lucide-user"></i></div>
-        <div class="mentor-name-role">
-          <p class="name">Dr. Amina Komaiya</p>
-          <p class="role">Mentor</p>
+        <div class="avatar">AK</div>
+        <div class="mentor-details">
+          <h3>Dr. Amina Komaiya</h3>
+          <p>Mentor</p>
         </div>
       </div>
     </div>
   </header>
 
   <nav class="nav-bar">
-    <button class="nav-tab active">Overview</button>
-    <button class="nav-tab">Requests</button>
-    <button class="nav-tab">My Sessions</button>
-    <button class="nav-tab">Availability</button>
+    <button class="nav-tab active" onclick="showSection('overview')">Overview</button>
+    <button class="nav-tab" onclick="showSection('requests')">Requests</button>
+    <button class="nav-tab" onclick="showSection('sessions')">My Sessions</button>
+    <button class="nav-tab" onclick="showSection('availability')">Availability</button>
   </nav>
 
   <main class="dashboard">
-    <section class="welcome">
-      <h2>Welcome back, Dr. Amina! 👋</h2>
-      <p>Manage your mentorship sessions and availability</p>
-    </section>
+    <!-- Overview Section -->
+    <div class="content-section active" id="overview">
+      <div class="welcome-section">
+        <h2>Welcome back, Dr. Amina! </h2>
+        <p>Manage your mentorship sessions and availability</p>
+      </div>
 
-    <section class="stats">
-      <div class="stat-card">
-        <p class="stat-title">Pending Requests</p>
-        <p class="stat-value">3</p>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <p class="stat-title">Pending Requests</p>
+          <p class="stat-value">3</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-title">Upcoming Sessions</p>
+          <p class="stat-value">2</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-title">Active Mentees</p>
+          <p class="stat-value">5</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-title">Availability Slots</p>
+          <p class="stat-value">4</p>
+        </div>
       </div>
-      <div class="stat-card">
-        <p class="stat-title">Upcoming Sessions</p>
-        <p class="stat-value">2</p>
-      </div>
-      <div class="stat-card">
-        <p class="stat-title">Active Mentees</p>
-        <p class="stat-value">5</p>
-      </div>
-      <div class="stat-card">
-        <p class="stat-title">Availability Slots</p>
-        <p class="stat-value">4</p>
-      </div>
-    </section>
 
-    <section class="mentor-actions">
-      <h3>Quick Actions</h3>
-      <div class="actions">
-        <button class="action-btn">View Requests</button>
-        <button class="action-btn">Schedule Session</button>
-        <button class="action-btn">Update Availability</button>
+      <div class="quick-actions">
+        <h3 class="section-title">Quick Actions</h3>
+        <div class="actions-grid">
+          <button class="action-btn" onclick="showSection('requests')">View Requests</button>
+          <button class="action-btn" onclick="showSection('sessions')">Schedule Session</button>
+          <button class="action-btn" onclick="showSection('availability')">Update Availability</button>
+        </div>
       </div>
-    </section>
 
-    <section class="tip">
-      <h3>Mentorship Tip</h3>
-      <p>
-        💡 Stay consistent with your availability. Clear communication and session notes
-        help mentees get the best out of each session.
-      </p>
-    </section>
+      <div class="tip-section">
+        <h3>Mentorship Tip</h3>
+        <p>💡 Stay consistent with your availability. Clear communication and session notes help mentees get the best out of each session.</p>
+      </div>
+    </div>
+
+    <!-- Requests Section -->
+    <div class="content-section" id="requests">
+      <div class="welcome-section">
+        <h2>Mentorship Requests</h2>
+        <p>Review and respond to mentorship requests from aspiring women in tech</p>
+      </div>
+
+      <div class="requests-list">
+        <div class="request-card">
+          <div class="request-info">
+            <h4>Sarah Johnson</h4>
+            <p>Frontend Developer • Interested in React and career transition</p>
+            <p><small>Requested: 2 hours ago</small></p>
+          </div>
+          <div class="request-actions">
+            <button class="btn-accept" onclick="acceptRequest('Sarah Johnson')">Accept</button>
+            <button class="btn-decline" onclick="declineRequest('Sarah Johnson')">Decline</button>
+          </div>
+        </div>
+
+        <div class="request-card">
+          <div class="request-info">
+            <h4>Maria Rodriguez</h4>
+            <p>Data Scientist • Looking for guidance on machine learning projects</p>
+            <p><small>Requested: 5 hours ago</small></p>
+          </div>
+          <div class="request-actions">
+            <button class="btn-accept" onclick="acceptRequest('Maria Rodriguez')">Accept</button>
+            <button class="btn-decline" onclick="declineRequest('Maria Rodriguez')">Decline</button>
+          </div>
+        </div>
+
+        <div class="request-card">
+          <div class="request-info">
+            <h4>Fatima Al-Zahra</h4>
+            <p>Software Engineering Student • Seeking advice on tech interview preparation</p>
+            <p><small>Requested: 1 day ago</small></p>
+          </div>
+          <div class="request-actions">
+            <button class="btn-accept" onclick="acceptRequest('Fatima Al-Zahra')">Accept</button>
+            <button class="btn-decline" onclick="declineRequest('Fatima Al-Zahra')">Decline</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sessions Section -->
+    <div class="content-section" id="sessions">
+      <div class="welcome-section">
+        <h2>My Sessions</h2>
+        <p>Manage your upcoming and completed mentorship sessions</p>
+      </div>
+
+      <div class="sessions-list">
+        <div class="session-card">
+          <div class="session-header">
+            <h4>Session with Jennifer Chen</h4>
+            <span class="session-date">Tomorrow, 2:00 PM</span>
+          </div>
+          <p><strong>Topic:</strong> Career transition from marketing to UX design</p>
+          <p><strong>Duration:</strong> 60 minutes</p>
+          <p><strong>Platform:</strong> Google Meet</p>
+        </div>
+
+        <div class="session-card">
+          <div class="session-header">
+            <h4>Session with Priya Sharma</h4>
+            <span class="session-date">Friday, 10:00 AM</span>
+          </div>
+          <p><strong>Topic:</strong> Building confidence in technical presentations</p>
+          <p><strong>Duration:</strong> 45 minutes</p>
+          <p><strong>Platform:</strong> Google Meet</p>
+        </div>
+
+        <div class="session-card">
+          <div class="session-header">
+            <h4>Completed: Session with Lisa Park</h4>
+            <span class="session-date">Last Week</span>
+          </div>
+          <p><strong>Topic:</strong> Negotiating salary and promotions in tech</p>
+          <p><strong>Duration:</strong> 50 minutes</p>
+          <p><strong>Platform:</strong> Google Meet</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Availability Section -->
+    <div class="content-section" id="availability">
+      <div class="welcome-section">
+        <h2>My Availability</h2>
+        <p>Set your available time slots for mentorship sessions</p>
+      </div>
+
+      <div class="availability-grid">
+        <div class="day-card">
+          <div class="day-name">Monday</div>
+          <div class="time-slot available">2:00 PM - 3:00 PM</div>
+          <div class="time-slot">4:00 PM - 5:00 PM</div>
+          <div class="time-slot">6:00 PM - 7:00 PM</div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-name">Tuesday</div>
+          <div class="time-slot">10:00 AM - 11:00 AM</div>
+          <div class="time-slot available">2:00 PM - 3:00 PM</div>
+          <div class="time-slot">5:00 PM - 6:00 PM</div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-name">Wednesday</div>
+          <div class="time-slot available">9:00 AM - 10:00 AM</div>
+          <div class="time-slot available">3:00 PM - 4:00 PM</div>
+          <div class="time-slot">7:00 PM - 8:00 PM</div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-name">Thursday</div>
+          <div class="time-slot">11:00 AM - 12:00 PM</div>
+          <div class="time-slot available">2:00 PM - 3:00 PM</div>
+          <div class="time-slot">6:00 PM - 7:00 PM</div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-name">Friday</div>
+          <div class="time-slot available">10:00 AM - 11:00 AM</div>
+          <div class="time-slot">1:00 PM - 2:00 PM</div>
+          <div class="time-slot">4:00 PM - 5:00 PM</div>
+        </div>
+      </div>
+    </div>
   </main>
+
+  <script>
+    // Google Calendar API Configuration
+    const GOOGLE_CALENDAR_CONFIG = {
+      apiKey: 'AIzaSyC_UDGoqFu0cGzRTJFtWVa2RwMc8Gzi0RE',
+      clientId: '733226770691-3qjcu08bcfh6pav5beqcenicivfr91v2.apps.googleusercontent.com',
+      discoveryDoc: 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+      scopes: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events'
+    };
+
+    let gapi;
+    let googleCalendarConnected = false;
+    let currentUser = null;
+    let userProfile = null;
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeApp();
+      setupUIInteractions();
+    });
+
+    // Initialize the application
+    function initializeApp() {
+      // Check if Firebase is available
+      if (typeof firebase !== 'undefined') {
+        initializeFirebase();
+      } else {
+        // For demo purposes, load sample data
+        loadDemoData();
+      }
+      
+      // Initialize Google Calendar if available
+      if (typeof window.gapi !== 'undefined') {
+        initializeGoogleCalendar();
+      }
+    }
+
+    // Initialize Firebase functionality
+    function initializeFirebase() {
+      firebase.auth().onAuthStateChanged(async (user) => {
+        if (!user) {
+          // Redirect to login or show demo data
+          loadDemoData();
+          return;
+        }
+
+        try {
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          const profile = userDoc.data();
+          currentUser = user;
+          userProfile = profile;
+          
+          renderProfileInfo(user, profile);
+          loadMentorData(user.uid);
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          loadDemoData();
+        }
+      });
+    }
+
+    // Load demo data for development/testing
+    function loadDemoData() {
+      console.log('Loading demo data...');
+      updateDashboardStats(3, 2, 5, 4);
+      loadDemoRequests();
+      loadDemoSessions();
+      loadDemoAvailability();
+    }
+
+    // Navigation functionality
+    function showSection(sectionId) {
+      // Hide all sections
+      const sections = document.querySelectorAll('.content-section');
+      sections.forEach(section => {
+        section.classList.remove('active');
+      });
+
+      // Remove active class from all nav tabs
+      const navTabs = document.querySelectorAll('.nav-tab');
+      navTabs.forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show selected section
+      document.getElementById(sectionId).classList.add('active');
+      
+      // Add active class to clicked nav tab
+      event.target.classList.add('active');
+    }
+
+    // Update dashboard statistics
+    function updateDashboardStats(pending, upcoming, active, slots) {
+      const statValues = document.querySelectorAll('.stat-value');
+      if (statValues.length >= 4) {
+        statValues[0].textContent = pending;
+        statValues[1].textContent = upcoming;
+        statValues[2].textContent = active;
+        statValues[3].textContent = slots;
+      }
+    }
+
+    // Request handling functions
+    async function acceptRequest(mentee) {
+      try {
+        if (currentUser && typeof db !== 'undefined') {
+          // Update in Firebase
+          await updateRequestStatus(mentee, 'accepted');
+        }
+        
+        alert(`Mentorship request from ${mentee} has been accepted! A confirmation email will be sent.`);
+        updatePendingRequestsCount(-1);
+        
+        // Remove the request card from UI
+        const requestCards = document.querySelectorAll('.request-card');
+        requestCards.forEach(card => {
+          if (card.textContent.includes(mentee)) {
+            card.style.opacity = '0.5';
+            card.style.pointerEvents = 'none';
+            setTimeout(() => card.remove(), 500);
+          }
+        });
+      } catch (error) {
+        console.error('Error accepting request:', error);
+        alert('Error accepting request. Please try again.');
+      }
+    }
+
+    async function declineRequest(mentee) {
+      try {
+        if (currentUser && typeof db !== 'undefined') {
+          // Update in Firebase
+          await updateRequestStatus(mentee, 'declined');
+        }
+        
+        alert(`Mentorship request from ${mentee} has been declined.`);
+        updatePendingRequestsCount(-1);
+        
+        // Remove the request card from UI
+        const requestCards = document.querySelectorAll('.request-card');
+        requestCards.forEach(card => {
+          if (card.textContent.includes(mentee)) {
+            card.style.opacity = '0.5';
+            card.style.pointerEvents = 'none';
+            setTimeout(() => card.remove(), 500);
+          }
+        });
+      } catch (error) {
+        console.error('Error declining request:', error);
+        alert('Error declining request. Please try again.');
+      }
+    }
+
+    // Firebase helper functions
+    async function updateRequestStatus(mentee, status) {
+      if (!currentUser || typeof db === 'undefined') return;
+      
+      // This would find and update the specific request in Firebase
+      const requests = await db.collection('sessionRequests')
+        .where('mentorId', '==', currentUser.uid)
+        .where('menteeName', '==', mentee)
+        .get();
+      
+      requests.forEach(async (doc) => {
+        await db.collection('sessionRequests').doc(doc.id).update({
+          status: status,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+    }
+
+    function updatePendingRequestsCount(change) {
+      const pendingElement = document.querySelector('.stat-card:first-child .stat-value');
+      const currentCount = parseInt(pendingElement.textContent);
+      pendingElement.textContent = Math.max(0, currentCount + change);
+    }
+
+    // Load mentor data from Firebase
+    async function loadMentorData(userId) {
+      try {
+        await Promise.all([
+          loadSessionRequests(userId),
+          loadAcceptedSessions(userId),
+          loadAvailabilitySlots(userId),
+          loadMentorStats(userId)
+        ]);
+      } catch (error) {
+        console.error('Error loading mentor data:', error);
+      }
+    }
+
+    // Load session requests from Firebase
+    async function loadSessionRequests(userId = null) {
+      if (!userId || typeof db === 'undefined') {
+        loadDemoRequests();
+        return;
+      }
+
+      try {
+        const snapshot = await db.collection('sessionRequests')
+          .where('mentorId', '==', userId)
+          .where('status', '==', 'pending')
+          .orderBy('timestamp', 'desc')
+          .get();
+
+        const requestsList = document.querySelector('.requests-list');
+        if (!requestsList) return;
+
+        requestsList.innerHTML = '';
+
+        if (snapshot.empty) {
+          requestsList.innerHTML = '<p>No pending requests at the moment.</p>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const request = doc.data();
+          const requestCard = createRequestCard(request);
+          requestsList.appendChild(requestCard);
+        });
+
+        updateDashboardStats(snapshot.size, null, null, null);
+      } catch (error) {
+        console.error('Error loading session requests:', error);
+        loadDemoRequests();
+      }
+    }
+
+    // Load accepted sessions from Firebase
+    async function loadAcceptedSessions(userId = null) {
+      if (!userId || typeof db === 'undefined') {
+        loadDemoSessions();
+        return;
+      }
+
+      try {
+        const snapshot = await db.collection('sessions')
+          .where('mentorId', '==', userId)
+          .orderBy('scheduledDate', 'asc')
+          .get();
+
+        const sessionsList = document.querySelector('.sessions-list');
+        if (!sessionsList) return;
+
+        sessionsList.innerHTML = '';
+
+        if (snapshot.empty) {
+          sessionsList.innerHTML = '<p>No sessions scheduled yet.</p>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const session = doc.data();
+          const sessionCard = createSessionCard(session);
+          sessionsList.appendChild(sessionCard);
+        });
+      } catch (error) {
+        console.error('Error loading sessions:', error);
+        loadDemoSessions();
+      }
+    }
+
+    // Load availability slots from Firebase
+    async function loadAvailabilitySlots(userId = null) {
+      if (!userId || typeof db === 'undefined') {
+        loadDemoAvailability();
+        return;
+      }
+
+      try {
+        const snapshot = await db.collection('availability')
+          .where('mentorId', '==', userId)
+          .where('available', '==', true)
+          .orderBy('timestamp', 'desc')
+          .get();
+
+        renderAvailabilityGrid(snapshot);
+      } catch (error) {
+        console.error('Error loading availability slots:', error);
+        loadDemoAvailability();
+      }
+    }
+
+    // Create request card element
+    function createRequestCard(request) {
+      const card = document.createElement('div');
+      card.className = 'request-card';
+      card.innerHTML = `
+        <div class="request-info">
+          <h4>${request.menteeName}</h4>
+          <p>${request.menteeRole} • ${request.topic}</p>
+          <p><small>Requested: ${formatTimestamp(request.timestamp)}</small></p>
+        </div>
+        <div class="request-actions">
+          <button class="btn-accept" onclick="acceptRequest('${request.menteeName}')">Accept</button>
+          <button class="btn-decline" onclick="declineRequest('${request.menteeName}')">Decline</button>
+        </div>
+      `;
+      return card;
+    }
+
+    // Create session card element
+    function createSessionCard(session) {
+      const card = document.createElement('div');
+      card.className = 'session-card';
+      const isUpcoming = new Date(session.scheduledDate) > new Date();
+      
+      card.innerHTML = `
+        <div class="session-header">
+          <h4>${isUpcoming ? 'Session with' : 'Completed:'} ${session.menteeName}</h4>
+          <span class="session-date">${formatDate(session.scheduledDate)}</span>
+        </div>
+        <p><strong>Topic:</strong> ${session.topic}</p>
+        <p><strong>Duration:</strong> ${session.duration} minutes</p>
+        <p><strong>Platform:</strong> ${session.platform}</p>
+        ${session.notes ? `<p><strong>Notes:</strong> ${session.notes}</p>` : ''}
+      `;
+      return card;
+    }
+
+    // Demo data loading functions
+    function loadDemoRequests() {
+      // This function is already implemented with the static data in HTML
+      console.log('Demo requests loaded');
+    }
+
+    function loadDemoSessions() {
+      // This function is already implemented with the static data in HTML
+      console.log('Demo sessions loaded');
+    }
+
+    function loadDemoAvailability() {
+      // This function is already implemented with the static data in HTML
+      console.log('Demo availability loaded');
+    }
+
+    // Google Calendar Integration
+    function initializeGoogleCalendar() {
+      gapi = window.gapi;
+      // Add calendar integration button to availability section
+      addGoogleCalendarIntegration();
+    }
+
+    function addGoogleCalendarIntegration() {
+      const availabilitySection = document.getElementById('availability');
+      if (availabilitySection) {
+        const calendarIntegration = document.createElement('div');
+        calendarIntegration.className = 'calendar-integration';
+        calendarIntegration.style.marginBottom = '2rem';
+        calendarIntegration.innerHTML = `
+          <button id="connectGoogleCalendar" class="action-btn">
+            Connect Google Calendar
+          </button>
+          <button id="syncCalendarBtn" class="action-btn" style="margin-left: 1rem;">
+            Sync Availability
+          </button>
+          <p id="calendarMessage" style="margin-top: 1rem; font-size: 0.9rem;"></p>
+        `;
+        
+        availabilitySection.insertBefore(calendarIntegration, availabilitySection.querySelector('.availability-grid'));
+        
+        // Setup event listeners
+        const connectBtn = document.getElementById('connectGoogleCalendar');
+        const syncBtn = document.getElementById('syncCalendarBtn');
+        
+        if (connectBtn) connectBtn.addEventListener('click', handleGoogleCalendarConnect);
+        if (syncBtn) syncBtn.addEventListener('click', syncAvailabilityWithCalendar);
+      }
+    }
+
+    // Handle Google Calendar connection
+    async function handleGoogleCalendarConnect() {
+      try {
+        if (!gapi.client) {
+          await new Promise((resolve) => {
+            gapi.load('client:auth2', resolve);
+          });
+          await gapi.client.init({
+            apiKey: GOOGLE_CALENDAR_CONFIG.apiKey,
+            clientId: GOOGLE_CALENDAR_CONFIG.clientId,
+            discoveryDocs: [GOOGLE_CALENDAR_CONFIG.discoveryDoc],
+            scope: GOOGLE_CALENDAR_CONFIG.scopes
+          });
+        }
+
+        const authInstance = gapi.auth2.getAuthInstance();
+        
+        if (!authInstance.isSignedIn.get()) {
+          await authInstance.signIn();
+          googleCalendarConnected = true;
+          updateCalendarStatus('Google Calendar connected successfully!', 'success');
+        } else {
+          await authInstance.signOut();
+          googleCalendarConnected = false;
+          updateCalendarStatus('Google Calendar disconnected', 'info');
+        }
+        
+        updateConnectButtonState();
+      } catch (error) {
+        console.error('Error connecting to Google Calendar:', error);
+        updateCalendarStatus('Error connecting to Google Calendar', 'error');
+      }
+    }
+
+    // Sync availability with Google Calendar
+    async function syncAvailabilityWithCalendar() {
+      if (!googleCalendarConnected) {
+        updateCalendarStatus('Please connect to Google Calendar first', 'error');
+        return;
+      }
+
+      try {
+        updateCalendarStatus('Syncing with Google Calendar...', 'info');
+        
+        // Get calendar events for the next 30 days
+        const response = await gapi.client.calendar.events.list({
+          calendarId: 'primary',
+          timeMin: new Date().toISOString(),
+          timeMax: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          singleEvents: true,
+          orderBy: 'startTime'
+        });
+
+        const events = response.result.items;
+        updateCalendarStatus(`Found ${events.length} calendar events. Availability updated!`, 'success');
+        
+        // Here you would update your availability based on calendar events
+        // This is a simplified version
+        console.log('Calendar events:', events);
+        
+      } catch (error) {
+        console.error('Error syncing with Google Calendar:', error);
+        updateCalendarStatus('Error syncing with Google Calendar', 'error');
+      }
+    }
+
+    // Update calendar status message
+    function updateCalendarStatus(message, type) {
+      const messageDiv = document.getElementById('calendarMessage');
+      if (messageDiv) {
+        messageDiv.textContent = message;
+        messageDiv.className = `calendar-message ${type}`;
+        
+        // Style based on message type
+        switch (type) {
+          case 'success':
+            messageDiv.style.color = '#28a745';
+            break;
+          case 'error':
+            messageDiv.style.color = '#dc3545';
+            break;
+          case 'info':
+            messageDiv.style.color = '#17a2b8';
+            break;
+          default:
+            messageDiv.style.color = '#666';
+        }
+      }
+    }
+
+    function updateConnectButtonState() {
+      const connectButton = document.getElementById('connectGoogleCalendar');
+      if (!connectButton) return;
+      
+      if (googleCalendarConnected) {
+        connectButton.textContent = 'Disconnect Google Calendar';
+        connectButton.style.background = '#dc3545';
+      } else {
+        connectButton.textContent = 'Connect Google Calendar';
+        connectButton.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+      }
+    }
+
+    // Utility functions
+    function formatTimestamp(timestamp) {
+      if (!timestamp) return 'Recently';
+      
+      if (timestamp.toDate) {
+        return timestamp.toDate().toLocaleDateString();
+      }
+      return new Date(timestamp).toLocaleDateString();
+    }
+
+    function formatDate(date) {
+      if (typeof date === 'string') {
+        return new Date(date).toLocaleDateString();
+      }
+      if (date.toDate) {
+        return date.toDate().toLocaleDateString();
+      }
+      return date.toLocaleDateString();
+    }
+
+    // Remove availability slot
+    async function removeAvailability(slotId) {
+      try {
+        if (typeof db !== 'undefined') {
+          await db.collection('availability').doc(slotId).update({ available: false });
+        }
+        
+        // Remove from UI
+        const slot = document.querySelector(`[data-slot-id="${slotId}"]`);
+        if (slot) {
+          slot.remove();
+        }
+        
+        updateCalendarStatus('Availability slot removed', 'info');
+      } catch (error) {
+        console.error('Error removing availability slot:', error);
+        updateCalendarStatus('Error removing availability slot', 'error');
+      }
+    }
+
+    // Setup UI interactions
+    function setupUIInteractions() {
+      // Add click handlers for time slots in availability section
+      const timeSlots = document.querySelectorAll('.time-slot');
+      timeSlots.forEach(slot => {
+        slot.addEventListener('click', function() {
+          this.classList.toggle('available');
+          if (this.classList.contains('available')) {
+            this.style.background = '#d4edda';
+            this.style.color = '#155724';
+            // Save to database if connected
+            saveTimeSlotAvailability(this.textContent, true);
+          } else {
+            this.style.background = '#f8f9fa';
+            this.style.color = '#666';
+            // Update database if connected
+            saveTimeSlotAvailability(this.textContent, false);
+          }
+        });
+      });
+
+      // Add hover effects for cards
+      const cards = document.querySelectorAll('.stat-card, .request-card, .session-card');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          this.style.transform = 'translateY(-4px)';
+          this.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateY(0)';
+          this.style.boxShadow = 'none';
+        });
+      });
+    }
+
+    // Save time slot availability
+    async function saveTimeSlotAvailability(timeSlot, isAvailable) {
+      if (!currentUser || typeof db === 'undefined') return;
+      
+      try {
+        // This would save the time slot availability to Firebase
+        await db.collection('availability').add({
+          mentorId: currentUser.uid,
+          timeSlot: timeSlot,
+          available: isAvailable,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        console.log(`Time slot ${timeSlot} marked as ${isAvailable ? 'available' : 'unavailable'}`);
+      } catch (error) {
+        console.error('Error saving time slot availability:', error);
+      }
+    }
+
+    // Render profile information
+    function renderProfileInfo(user, profile) {
+      // Update the mentor name and role in header
+      const mentorDetails = document.querySelector('.mentor-details h3');
+      const mentorRole = document.querySelector('.mentor-details p');
+      
+      if (mentorDetails) {
+        mentorDetails.textContent = profile.name || user.email;
+      }
+      
+      if (mentorRole) {
+        mentorRole.textContent = profile.role || 'Mentor';
+      }
+      
+      // Update welcome message
+      const welcomeSection = document.querySelector('.welcome-section h2');
+      if (welcomeSection) {
+        const firstName = (profile.name || user.email).split(' ')[0];
+        welcomeSection.textContent = `Welcome back, ${firstName}! 👋`;
+      }
+    }
+
+    // Load mentor statistics
+    async function loadMentorStats(userId) {
+      if (!userId || typeof db === 'undefined') return;
+      
+      try {
+        // Get counts for different metrics
+        const [pendingSnapshot, upcomingSnapshot, activeSnapshot, availabilitySnapshot] = await Promise.all([
+          db.collection('sessionRequests').where('mentorId', '==', userId).where('status', '==', 'pending').get(),
+          db.collection('sessions').where('mentorId', '==', userId).where('status', '==', 'scheduled').get(),
+          db.collection('mentorships').where('mentorId', '==', userId).where('active', '==', true).get(),
+          db.collection('availability').where('mentorId', '==', userId).where('available', '==', true).get()
+        ]);
+        
+        updateDashboardStats(
+          pendingSnapshot.size,
+          upcomingSnapshot.size,
+          activeSnapshot.size,
+          availabilitySnapshot.size
+        );
+      } catch (error) {
+        console.error('Error loading mentor stats:', error);
+      }
+    }
+  </script>
 </body>
 </html>

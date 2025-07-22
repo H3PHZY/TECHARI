@@ -15,7 +15,192 @@ let googleCalendarConnected = false;
 document.addEventListener('DOMContentLoaded', () => {
   initializeGoogleCalendar();
   setupAuthStateListener();
+  initializeTabNavigation();
+  initializeInteractiveFeatures();
 });
+
+// Tab navigation functionality
+function initializeTabNavigation() {
+  const navTabs = document.querySelectorAll('.nav-tab');
+  navTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const sectionId = this.textContent.toLowerCase().replace(' ', '');
+      showSection(sectionId === 'mysessions' ? 'sessions' : sectionId);
+    });
+  });
+}
+
+// Navigation functionality
+function showSection(sectionId) {
+  // Hide all sections
+  const sections = document.querySelectorAll('.content-section');
+  sections.forEach(section => {
+    section.classList.remove('active');
+  });
+
+  // Remove active class from all nav tabs
+  const navTabs = document.querySelectorAll('.nav-tab');
+  navTabs.forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // Show selected section
+  const targetSection = document.getElementById(sectionId);
+  if (targetSection) {
+    targetSection.classList.add('active');
+  }
+  
+  // Add active class to corresponding nav tab
+  const activeTab = Array.from(navTabs).find(tab => {
+    const tabText = tab.textContent.toLowerCase().replace(' ', '');
+    return (sectionId === 'sessions' && tabText === 'mysessions') || tabText === sectionId;
+  });
+  
+  if (activeTab) {
+    activeTab.classList.add('active');
+  }
+}
+
+// Initialize interactive features
+function initializeInteractiveFeatures() {
+  // Add click handlers for time slots
+  const timeSlots = document.querySelectorAll('.time-slot');
+  timeSlots.forEach(slot => {
+    slot.addEventListener('click', function() {
+      this.classList.toggle('available');
+      if (this.classList.contains('available')) {
+        this.style.background = '#d4edda';
+        this.style.color = '#155724';
+      } else {
+        this.style.background = '#f8f9fa';
+        this.style.color = '#666';
+      }
+    });
+  });
+
+  // Add hover effects for cards
+  const cards = document.querySelectorAll('.stat-card, .request-card, .session-card');
+  cards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-4px)';
+      this.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
+      this.style.transition = 'all 0.3s ease';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = 'none';
+    });
+  });
+}
+
+// Request handling functions
+function acceptRequest(mentee) {
+  // Show confirmation dialog
+  if (confirm(`Accept mentorship request from ${mentee}?`)) {
+    // In a real application, this would update the database
+    showNotification(`Mentorship request from ${mentee} has been accepted! A confirmation email will be sent.`, 'success');
+    updatePendingRequestsCount(-1);
+    
+    // Remove the request card from UI
+    removeRequestCard(mentee);
+    
+    // Add to active mentees
+    updateActiveMenteesCount(1);
+  }
+}
+
+function declineRequest(mentee) {
+  // Show confirmation dialog
+  if (confirm(`Decline mentorship request from ${mentee}?`)) {
+    showNotification(`Mentorship request from ${mentee} has been declined.`, 'info');
+    updatePendingRequestsCount(-1);
+    
+    // Remove the request card from UI
+    removeRequestCard(mentee);
+  }
+}
+
+function removeRequestCard(mentee) {
+  const requestCards = document.querySelectorAll('.request-card');
+  requestCards.forEach(card => {
+    const nameElement = card.querySelector('h4');
+    if (nameElement && nameElement.textContent === mentee) {
+      card.style.transition = 'opacity 0.3s ease';
+      card.style.opacity = '0';
+      setTimeout(() => {
+        card.remove();
+      }, 300);
+    }
+  });
+}
+
+function updatePendingRequestsCount(change) {
+  const pendingElement = document.querySelector('.stat-card:first-child .stat-value');
+  if (pendingElement) {
+    const currentCount = parseInt(pendingElement.textContent);
+    pendingElement.textContent = Math.max(0, currentCount + change);
+  }
+}
+
+function updateActiveMenteesCount(change) {
+  const menteesElement = document.querySelector('.stat-card:nth-child(3) .stat-value');
+  if (menteesElement) {
+    const currentCount = parseInt(menteesElement.textContent);
+    menteesElement.textContent = Math.max(0, currentCount + change);
+  }
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#667eea'};
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    z-index: 1000;
+    font-weight: 500;
+    max-width: 300px;
+    animation: slideIn 0.3s ease;
+  `;
+  
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  // Add slide-in animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Remove notification after 5 seconds
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => {
+      notification.remove();
+      style.remove();
+    }, 300);
+  }, 5000);
+  
+  // Add slide-out animation
+  style.textContent += `
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  `;
+}
 
 // Initialize Google Calendar API
 function initializeGoogleCalendar() {
@@ -33,9 +218,19 @@ function initializeGoogleCalendar() {
 
 // Setup Firebase auth state listener
 function setupAuthStateListener() {
+  // Check if Firebase is available
+  if (typeof firebase === 'undefined') {
+    console.log('Firebase not loaded - running in demo mode');
+    setupDemoMode();
+    return;
+  }
+
   firebase.auth().onAuthStateChanged(async (user) => {
     if (!user) {
-      window.location.href = "index.html";
+      // In demo mode, don't redirect
+      if (typeof firebase !== 'undefined') {
+        window.location.href = "index.html";
+      }
       return;
     }
 
@@ -48,6 +243,20 @@ function setupAuthStateListener() {
       console.error("Error loading user data:", error);
     }
   });
+}
+
+// Setup demo mode when Firebase is not available
+function setupDemoMode() {
+  const demoProfile = {
+    name: 'Dr. Amina Komaiya',
+    role: 'mentor',
+    bio: 'Senior Software Engineer with 10+ years of experience in full-stack development',
+    skills: ['JavaScript', 'Python', 'React', 'Node.js', 'Machine Learning'],
+    interests: 'Mentoring women in tech, AI/ML applications, sustainable technology'
+  };
+  
+  renderDashboardContent(demoProfile, 'demo-user');
+  console.log('Running in demo mode');
 }
 
 // Render profile information
@@ -66,44 +275,54 @@ function renderProfileInfo(user, profile) {
 
 // Render dashboard content based on role
 function renderDashboardContent(profile, userId) {
+  if (profile.role === "mentor" || !profile.role) {
+    setupMentorDashboard(profile, userId);
+  } else if (profile.role === "mentee") {
+    setupMenteeDashboard(userId);
+  }
+}
+
+function setupMentorDashboard(profile, userId) {
+  // Load mentor-specific data
+  loadSessionRequests();
+  loadAcceptedSessions();
+  loadAvailabilitySlots();
+  
+  // Setup profile edit functionality
+  setupProfileEdit(profile);
+  
+  // Setup availability management
+  setupAvailabilityManagement();
+  
+  console.log('Mentor dashboard loaded for:', profile.name);
+}
+
+function setupMenteeDashboard(userId) {
   const dashboard = document.getElementById('dashboardContent');
   if (!dashboard) return;
 
-  if (profile.role === "mentor") {
-    dashboard.innerHTML = `
-      <h3>Session Requests</h3>
-      <div id="sessionRequests"></div>
-      <h3>Accepted Sessions</h3>
-      <div id="acceptedSessions"></div>
-      <p id="message"></p>
-      <div id="mentorProfileEdit"></div>
-      <div id="mentorAvailability"></div>
-      <ul id="availabilityList"></ul>
-      <button id="syncCalendarBtn" class="mentor-btn">Sync with Google Calendar</button>
-    `;
-    
-    renderMentorProfileEdit(profile);
-    renderMentorAvailability();
-    loadSessionRequests();
-    loadAcceptedSessions();
-    loadAvailabilitySlots();
-    
-    // Setup calendar sync button
-    const syncBtn = document.getElementById('syncCalendarBtn');
-    if (syncBtn) {
-      syncBtn.addEventListener('click', syncAvailabilityWithCalendar);
-    }
-  } else if (profile.role === "mentee") {
-    dashboard.innerHTML = `
-      <h3>Your Session Requests</h3>
-      <div id="menteeRequests"></div>
-      <h3>Your Progress</h3>
-      <div id="progress"></div>
-      <p id="message"></p>
-    `;
-    loadMenteeRequests(userId);
-    loadProgress(userId);
-  }
+  dashboard.innerHTML = `
+    <h3>Your Session Requests</h3>
+    <div id="menteeRequests"></div>
+    <h3>Your Progress</h3>
+    <div id="progress"></div>
+    <p id="message"></p>
+  `;
+  
+  loadMenteeRequests(userId);
+  loadProgress(userId);
+}
+
+// Profile management
+function setupProfileEdit(profile) {
+  // This would set up profile editing functionality
+  console.log('Profile edit setup for:', profile.name);
+}
+
+// Availability management
+function setupAvailabilityManagement() {
+  // This would set up availability management
+  console.log('Availability management setup');
 }
 
 // Handle Google Calendar connection
@@ -123,19 +342,72 @@ async function handleGoogleCalendarConnect() {
     }
 
     const authInstance = gapi.auth2.getAuthInstance();
-    // Rest of your function...
+    
+    if (googleCalendarConnected) {
+      // Disconnect
+      await authInstance.signOut();
+      googleCalendarConnected = false;
+      updateCalendarStatus('Google Calendar disconnected', 'info');
+    } else {
+      // Connect
+      await authInstance.signIn();
+      googleCalendarConnected = true;
+      updateCalendarStatus('Google Calendar connected successfully!', 'success');
+      await syncAvailabilityWithCalendar();
+    }
+    
+    updateConnectButtonState();
   } catch (error) {
     console.error('Error connecting to Google Calendar:', error);
+    updateCalendarStatus('Error connecting to Google Calendar', 'error');
   }
+}
+
+// Calendar sync functionality
+async function syncAvailabilityWithCalendar() {
+  if (!googleCalendarConnected) {
+    showNotification('Please connect to Google Calendar first', 'error');
+    return;
+  }
+
+  try {
+    showNotification('Syncing with Google Calendar...', 'info');
+    
+    // Get calendar events for the next 30 days
+    const timeMin = new Date().toISOString();
+    const timeMax = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    
+    const response = await gapi.client.calendar.events.list({
+      calendarId: 'primary',
+      timeMin: timeMin,
+      timeMax: timeMax,
+      singleEvents: true,
+      orderBy: 'startTime'
+    });
+
+    const events = response.result.items || [];
+    
+    // Process events and update availability
+    processCalendarEvents(events);
+    
+    showNotification('Calendar sync completed!', 'success');
+  } catch (error) {
+    console.error('Error syncing calendar:', error);
+    showNotification('Error syncing with calendar', 'error');
+  }
+}
+
+function processCalendarEvents(events) {
+  // This would process calendar events and update availability slots
+  console.log('Processing', events.length, 'calendar events');
+  
+  // Update availability display
+  loadAvailabilitySlots();
 }
 
 // Update calendar status and button state
 function updateCalendarStatus(message, type) {
-  const messageDiv = document.getElementById('message');
-  if (messageDiv) {
-    messageDiv.textContent = message;
-    messageDiv.className = type;
-  }
+  showNotification(message, type);
 }
 
 function updateConnectButtonState() {
@@ -151,13 +423,74 @@ function updateConnectButtonState() {
   }
 }
 
-// Mentor profile edit functions (same as before)
+// Session management functions
+async function loadSessionRequests() {
+  // In a real app, this would load from Firebase
+  console.log('Loading session requests...');
+  
+  // Demo data is already in the HTML
+  const requestCards = document.querySelectorAll('.request-card');
+  requestCards.forEach((card, index) => {
+    // Add animation delay
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'all 0.3s ease';
+    
+    setTimeout(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+}
+
+async function loadAcceptedSessions() {
+  console.log('Loading accepted sessions...');
+  
+  // Demo data is already in the HTML
+  const sessionCards = document.querySelectorAll('.session-card');
+  sessionCards.forEach((card, index) => {
+    // Add animation delay
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'all 0.3s ease';
+    
+    setTimeout(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+}
+
+async function loadAvailabilitySlots() {
+  console.log('Loading availability slots...');
+  
+  // Demo functionality - time slots are already interactive in HTML
+  const timeSlots = document.querySelectorAll('.time-slot');
+  timeSlots.forEach(slot => {
+    if (slot.classList.contains('available')) {
+      slot.style.background = '#d4edda';
+      slot.style.color = '#155724';
+    }
+  });
+}
+
+async function loadMenteeRequests(userId) {
+  console.log('Loading mentee requests for user:', userId);
+  // Implementation for mentee dashboard
+}
+
+async function loadProgress(userId) {
+  console.log('Loading progress for user:', userId);
+  // Implementation for mentee progress tracking
+}
+
+// Mentor profile edit functions
 function renderMentorProfileEdit(profile) {
   const container = document.getElementById('mentorProfileEdit');
   if (!container) return;
   
   container.innerHTML = `
-    <button id="showEditProfileBtn" class="mentor-btn">Edit Profile</button>
+    <button id="showEditProfileBtn" class="action-btn">Edit Profile</button>
     <div id="mentorProfileFormContainer" style="display:none;"></div>
   `;
   
@@ -178,11 +511,20 @@ function showMentorProfileForm(profile) {
   formContainer.innerHTML = `
     <h3>Edit Your Profile</h3>
     <form id="mentorProfileForm">
-      <label>Name:</label><input type="text" id="mentorName" value="${profile.name || ''}" required>
-      <label>Bio:</label><textarea id="mentorBio" rows="3">${profile.bio || ''}</textarea>
-      <label>Skills:</label><input type="text" id="mentorSkills" value="${(profile.skills || []).join(', ')}">
-      <label>Interests:</label><input type="text" id="mentorInterests" value="${profile.interests || ''}">
-      <button type="submit" class="mentor-btn">Save</button>
+      <label>Name:</label>
+      <input type="text" id="mentorName" value="${profile.name || ''}" required>
+      
+      <label>Bio:</label>
+      <textarea id="mentorBio" rows="3">${profile.bio || ''}</textarea>
+      
+      <label>Skills (comma-separated):</label>
+      <input type="text" id="mentorSkills" value="${(profile.skills || []).join(', ')}">
+      
+      <label>Interests:</label>
+      <input type="text" id="mentorInterests" value="${profile.interests || ''}">
+      
+      <button type="submit" class="action-btn">Save Changes</button>
+      <button type="button" class="action-btn" onclick="cancelProfileEdit()">Cancel</button>
       <p id="mentorProfileMsg"></p>
     </form>
   `;
@@ -196,9 +538,24 @@ function showMentorProfileForm(profile) {
   }
 }
 
+function cancelProfileEdit() {
+  const formContainer = document.getElementById('mentorProfileFormContainer');
+  const editBtn = document.getElementById('showEditProfileBtn');
+  
+  if (formContainer) {
+    formContainer.style.display = 'none';
+  }
+  if (editBtn) {
+    editBtn.style.display = 'block';
+  }
+}
+
 async function updateMentorProfile() {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
+  const user = firebase?.auth()?.currentUser;
+  if (!user) {
+    showNotification('Profile update requires authentication', 'error');
+    return;
+  }
 
   const formContainer = document.getElementById('mentorProfileFormContainer');
   const msgElement = document.getElementById('mentorProfileMsg');
@@ -211,32 +568,46 @@ async function updateMentorProfile() {
       interests: document.getElementById('mentorInterests').value
     };
     
+    // In demo mode, just show success message
+    if (typeof firebase === 'undefined' || typeof db === 'undefined') {
+      showNotification('Profile updated successfully! (Demo mode)', 'success');
+      cancelProfileEdit();
+      return;
+    }
+    
     await db.collection('users').doc(user.uid).set(data, { merge: true });
     
-    if (formContainer) {
-      formContainer.innerHTML = `<p style='color:green;'>Profile updated!</p>`;
-      setTimeout(() => renderMentorProfileEdit(data), 1500);
-    }
+    showNotification('Profile updated successfully!', 'success');
+    cancelProfileEdit();
+    
   } catch (err) {
+    console.error('Error updating profile:', err);
     if (msgElement) {
       msgElement.textContent = 'Error: ' + err.message;
+      msgElement.style.color = 'red';
     }
   }
 }
 
-// Mentor Availability functions (same as before)
+// Mentor Availability functions
 function renderMentorAvailability() {
   const container = document.getElementById('mentorAvailability');
   if (!container) return;
   
   container.innerHTML = `
-    <h3>Add Availability</h3>
-    <form id="availabilityForm">
-      <input type="date" id="availableDate" required>
-      <input type="time" id="availableTime" required>
-      <button type="submit" class="mentor-btn">Add Slot</button>
-      <p id="availabilityMsg"></p>
+    <h3>Add Availability Slot</h3>
+    <form id="availabilityForm" style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
+      <div>
+        <label>Date:</label>
+        <input type="date" id="availableDate" required>
+      </div>
+      <div>
+        <label>Time:</label>
+        <input type="time" id="availableTime" required>
+      </div>
+      <button type="submit" class="action-btn">Add Slot</button>
     </form>
+    <p id="availabilityMsg"></p>
   `;
 
   const form = document.getElementById('availabilityForm');
@@ -251,10 +622,21 @@ function renderMentorAvailability() {
 }
 
 async function saveAvailability(date, time) {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
+  const user = firebase?.auth()?.currentUser;
+  
   try {
+    // In demo mode, just show success message
+    if (typeof firebase === 'undefined' || typeof db === 'undefined') {
+      showNotification(`Availability slot added: ${date} at ${time} (Demo mode)`, 'success');
+      loadAvailabilitySlots();
+      return;
+    }
+    
+    if (!user) {
+      showNotification('Authentication required to save availability', 'error');
+      return;
+    }
+
     await db.collection('availability').add({
       date,
       time,
@@ -263,432 +645,52 @@ async function saveAvailability(date, time) {
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
     
-    const msgElement = document.getElementById('availabilityMsg');
-    if (msgElement) {
-      msgElement.textContent = 'Slot added!';
-      msgElement.style.color = 'green';
-    }
-    
+    showNotification('Availability slot added successfully!', 'success');
     loadAvailabilitySlots();
-  } catch (err) {
-    const msgElement = document.getElementById('availabilityMsg');
-    if (msgElement) {
-      msgElement.textContent = 'Error: ' + err.message;
-      msgElement.style.color = 'red';
-    }
-  }
-}
-
-async function loadAvailabilitySlots() {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
-  const list = document.getElementById('availabilityList');
-  if (!list) return;
-
-  try {
-    const snapshot = await db.collection('availability')
-      .where('mentorId', '==', user.uid)
-      .where('available', '==', true)
-      .orderBy('timestamp', 'desc')
-      .get();
-
-    list.innerHTML = '';
     
-    if (snapshot.empty) {
-      list.innerHTML = '<li>No availability slots yet.</li>';
-      return;
-    }
-
-    snapshot.forEach(doc => {
-      const slot = doc.data();
-      const li = document.createElement('li');
-      li.dataset.datetime = `${slot.date}T${slot.time}`;
-      li.innerHTML = `
-        ${slot.date} at ${slot.time} 
-        <button onclick="removeAvailability('${doc.id}')" class="mentor-btn small-btn">Remove</button>
-      `;
-      list.appendChild(li);
-    });
-  } catch (error) {
-    console.error('Error loading availability slots:', error);
+    // Clear form
+    document.getElementById('availableDate').value = '';
+    document.getElementById('availableTime').value = '';
+    
+  } catch (err) {
+    console.error('Error saving availability:', err);
+    showNotification('Error saving availability slot', 'error');
   }
 }
 
 async function removeAvailability(slotId) {
   try {
+    // In demo mode, just show success message
+    if (typeof firebase === 'undefined' || typeof db === 'undefined') {
+      showNotification('Availability slot removed (Demo mode)', 'success');
+      return;
+    }
+    
     await db.collection('availability').doc(slotId).update({ available: false });
+    showNotification('Availability slot removed', 'success');
     loadAvailabilitySlots();
   } catch (error) {
     console.error('Error removing availability slot:', error);
-    const msgElement = document.getElementById('availabilityMsg');
-    if (msgElement) {
-      msgElement.textContent = 'Error removing slot';
-      msgElement.style.color = 'red';
-    }
+    showNotification('Error removing availability slot', 'error');
   }
 }
 
-// Session management functions
-async function loadSessionRequests() {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
-  const container = document.getElementById('sessionRequests');
-  if (!container) return;
-
-  try {
-    const snapshot = await db.collection('sessions')
-      .where('mentorId', '==', user.uid)
-      .where('status', '==', 'pending')
-      .orderBy('createdAt', 'desc')
-      .get();
-
-    container.innerHTML = '';
-    
-    if (snapshot.empty) {
-      container.innerHTML = '<p>No session requests.</p>';
-      return;
-    }
-
-    snapshot.forEach(doc => {
-      const session = doc.data();
-      const div = document.createElement('div');
-      div.className = 'session-request';
-      div.innerHTML = `
-        <h4>${session.menteeName}</h4>
-        <p>Topic: ${session.topic}</p>
-        <p>Date: ${session.date}</p>
-        <p>Time: ${session.time}</p>
-        <p>${session.message || ''}</p>
-        <button onclick="acceptSessionWithCalendar('${doc.id}', ${escapeJsonForHtml(session)})" class="mentor-btn">
-          Accept
-        </button>
-        <button onclick="rejectSession('${doc.id}')" class="mentor-btn reject-btn">
-          Reject
-        </button>
-      `;
-      container.appendChild(div);
-    });
-  } catch (error) {
-    console.error('Error loading session requests:', error);
-    container.innerHTML = '<p>Error loading requests.</p>';
-  }
+// Utility functions
+function formatDate(dateString) {
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
-function escapeJsonForHtml(obj) {
-  return JSON.stringify(obj).replace(/"/g, '&quot;');
+function formatTime(timeString) {
+  const options = { hour: 'numeric', minute: '2-digit', hour12: true };
+  return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(undefined, options);
 }
 
-async function loadAcceptedSessions() {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
-  const container = document.getElementById('acceptedSessions');
-  if (!container) return;
-
-  try {
-    const snapshot = await db.collection('sessions')
-      .where('mentorId', '==', user.uid)
-      .where('status', '==', 'accepted')
-      .orderBy('date')
-      .orderBy('time')
-      .get();
-
-    container.innerHTML = '';
-    
-    if (snapshot.empty) {
-      container.innerHTML = '<p>No accepted sessions.</p>';
-      return;
-    }
-
-    snapshot.forEach(doc => {
-      const session = doc.data();
-      const div = document.createElement('div');
-      div.className = 'accepted-session';
-      div.innerHTML = `
-        <h4>Session with ${session.menteeName}</h4>
-        <p>Topic: ${session.topic}</p>
-        <p>${session.date} at ${session.time}</p>
-        <p>Email: ${session.menteeEmail}</p>
-        ${session.calendarEventId ? `<p>Added to Google Calendar</p>` : ''}
-      `;
-      container.appendChild(div);
-    });
-  } catch (error) {
-    console.error('Error loading accepted sessions:', error);
-    container.innerHTML = '<p>Error loading sessions.</p>';
-  }
-}
-
-async function acceptSessionWithCalendar(sessionId, sessionData) {
-  if (!googleCalendarConnected) {
-    return acceptSession(sessionId);
-  }
-
-  try {
-    // Check for calendar conflicts first
-    const startTime = new Date(`${sessionData.date}T${sessionData.time}`).toISOString();
-    const endTime = new Date(new Date(startTime).getTime() + 60 * 60 * 1000).toISOString(); // 1 hour session
-    
-    const hasConflict = await checkCalendarConflicts(startTime, endTime);
-    
-    if (hasConflict) {
-      const userConfirm = confirm('You have a calendar conflict at this time. Do you want to accept anyway?');
-      if (!userConfirm) {
-        updateCalendarStatus('Session not accepted due to calendar conflict', 'warning');
-        return;
-      }
-    }
-
-    // Accept the session
-    await acceptSession(sessionId);
-
-    // Create calendar event
-    try {
-      const calendarEvent = await createCalendarEvent({
-        sessionId: sessionId,
-        menteeName: sessionData.menteeName,
-        menteeEmail: sessionData.menteeEmail,
-        topic: sessionData.topic,
-        startTime: startTime,
-        endTime: endTime
-      });
-
-      // Store calendar event ID with session
-      await db.collection('sessions').doc(sessionId).update({
-        calendarEventId: calendarEvent.id
-      });
-
-      updateCalendarStatus('Session accepted and added to Google Calendar', 'success');
-    } catch (calendarError) {
-      console.error('Error adding to calendar:', calendarError);
-      updateCalendarStatus('Session accepted but failed to add to calendar', 'warning');
-    }
-  } catch (error) {
-    console.error('Error accepting session:', error);
-    updateCalendarStatus('Error accepting session', 'error');
-  }
-}
-
-async function acceptSession(sessionId) {
-  try {
-    await db.collection('sessions').doc(sessionId).update({ status: 'accepted' });
-    loadSessionRequests();
-    loadAcceptedSessions();
-  } catch (error) {
-    console.error('Error accepting session:', error);
-    throw error;
-  }
-}
-
-async function rejectSession(sessionId) {
-  try {
-    await db.collection('sessions').doc(sessionId).update({ status: 'rejected' });
-    loadSessionRequests();
-    updateCalendarStatus('Session rejected', 'info');
-  } catch (error) {
-    console.error('Error rejecting session:', error);
-    updateCalendarStatus('Error rejecting session', 'error');
-  }
-}
-
-// Google Calendar functions
-async function createCalendarEvent(sessionData) {
-  if (!googleCalendarConnected) {
-    throw new Error('Google Calendar not connected');
-  }
-
-  try {
-    const event = {
-      summary: `Mentoring Session with ${sessionData.menteeName || 'Mentee'}`,
-      description: `Mentoring session scheduled through platform.\n\nMentee: ${sessionData.menteeName || 'Not specified'}\nTopic: ${sessionData.topic || 'General mentoring'}\nSession ID: ${sessionData.sessionId || 'N/A'}`,
-      start: {
-        dateTime: sessionData.startTime,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-      },
-      end: {
-        dateTime: sessionData.endTime,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-      },
-      attendees: sessionData.menteeEmail ? [
-        { email: sessionData.menteeEmail }
-      ] : [],
-      reminders: {
-        useDefault: false,
-        overrides: [
-          { method: 'email', minutes: 24 * 60 }, // 24 hours
-          { method: 'popup', minutes: 30 }       // 30 minutes
-        ]
-      }
-    };
-
-    const response = await gapi.client.calendar.events.insert({
-      calendarId: 'primary',
-      resource: event
-    });
-
-    return response.result;
-  } catch (error) {
-    console.error('Error creating calendar event:', error);
-    throw error;
-  }
-}
-
-async function checkCalendarConflicts(startTime, endTime) {
-  if (!googleCalendarConnected) return false;
-
-  try {
-    const response = await gapi.client.calendar.events.list({
-      calendarId: 'primary',
-      timeMin: startTime,
-      timeMax: endTime,
-      singleEvents: true,
-      showDeleted: false
-    });
-
-    // Filter out declined events and transparent events
-    const conflictingEvents = response.result.items.filter(event => {
-      return event.transparency !== 'transparent' && 
-             !event.attendees?.some(attendee => attendee.self && attendee.responseStatus === 'declined');
-    });
-
-    return conflictingEvents.length > 0;
-  } catch (error) {
-    console.error('Error checking calendar conflicts:', error);
-    return false;
-  }
-}
-
-// Sync availability with Google Calendar
-async function syncAvailabilityWithCalendar() {
-  if (!googleCalendarConnected) {
-    alert('Please connect to Google Calendar first');
-    return;
-  }
-
-  const availabilityList = document.getElementById('availabilityList');
-  if (!availabilityList) return;
-
-  const slots = availabilityList.children;
-  if (slots.length === 0) return;
-
-  const syncBtn = document.getElementById('syncCalendarBtn');
-  const originalText = syncBtn?.textContent;
-  
-  if (syncBtn) {
-    syncBtn.textContent = 'Syncing...';
-    syncBtn.disabled = true;
-  }
-
-  try {
-    for (let slot of slots) {
-      const slotData = slot.dataset;
-      if (!slotData.datetime) continue;
-
-      const startTime = new Date(slotData.datetime).toISOString();
-      const endTime = new Date(new Date(slotData.datetime).getTime() + 60 * 60 * 1000).toISOString();
-
-      // Check if this slot conflicts with existing events
-      const hasConflict = await checkCalendarConflicts(startTime, endTime);
-      
-      if (hasConflict) {
-        slot.classList.add('conflict');
-        let conflictIndicator = slot.querySelector('.conflict-indicator');
-        if (!conflictIndicator) {
-          conflictIndicator = document.createElement('span');
-          conflictIndicator.className = 'conflict-indicator';
-          conflictIndicator.textContent = '⚠️ Calendar conflict';
-          slot.appendChild(conflictIndicator);
-        }
-      } else {
-        slot.classList.remove('conflict');
-        const conflictIndicator = slot.querySelector('.conflict-indicator');
-        if (conflictIndicator) conflictIndicator.remove();
-      }
-    }
-  } catch (error) {
-    console.error('Error syncing availability:', error);
-    updateCalendarStatus('Error syncing with Google Calendar', 'error');
-  } finally {
-    if (syncBtn) {
-      syncBtn.textContent = originalText;
-      syncBtn.disabled = false;
-    }
-  }
-}
-
-// Mentee functions
-function loadMenteeRequests(uid) {
-  const container = document.getElementById('menteeRequests');
-  if (!container) return;
-
-  db.collection('sessions').where('menteeId', '==', uid).get()
-    .then(snapshot => {
-      container.innerHTML = '';
-      if (snapshot.empty) {
-        container.innerHTML = '<p>No requests.</p>';
-        return;
-      }
-      
-      snapshot.forEach(doc => {
-        const s = doc.data();
-        container.innerHTML += `
-          <div class="mentee-request">
-            <p><strong>Mentor:</strong> ${s.mentorName}</p>
-            <p><strong>Status:</strong> <span class="status-${s.status}">${s.status}</span></p>
-            <p><strong>Topic:</strong> ${s.topic}</p>
-          </div>
-        `;
-      });
-    })
-    .catch(error => {
-      console.error('Error loading mentee requests:', error);
-      container.innerHTML = '<p>Error loading requests.</p>';
-    });
-}
-
-function loadProgress(uid) {
-  const container = document.getElementById('progress');
-  if (!container) return;
-
-  db.collection('sessions')
-    .where('menteeId', '==', uid)
-    .where('status', '==', 'accepted')
-    .get()
-    .then(snapshot => {
-      container.innerHTML = '';
-      if (snapshot.empty) {
-        container.innerHTML = '<p>No progress yet.</p>';
-        return;
-      }
-      
-      snapshot.forEach(doc => {
-        const s = doc.data();
-        container.innerHTML += `
-          <div class="progress-item">
-            <p><strong>Mentor:</strong> ${s.mentorName}</p>
-            <p><strong>Completed:</strong> ${s.date}</p>
-          </div>
-        `;
-      });
-    })
-    .catch(error => {
-      console.error('Error loading progress:', error);
-      container.innerHTML = '<p>Error loading progress.</p>';
-    });
-}
-
-// Logout function
-function logout() {
-  firebase.auth().signOut().then(() => {
-    window.location.href = "index.html";
-  });
-}
-
-// Make functions available globally
-window.acceptSessionWithCalendar = acceptSessionWithCalendar;
-window.acceptSession = acceptSession;
-window.rejectSession = rejectSession;
+// Export functions for global use
+window.showSection = showSection;
+window.acceptRequest = acceptRequest;
+window.declineRequest = declineRequest;
 window.removeAvailability = removeAvailability;
-window.logout = logout;
+window.cancelProfileEdit = cancelProfileEdit;
+
+console.log('Mentor dashboard JavaScript loaded successfully');

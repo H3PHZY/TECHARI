@@ -1,101 +1,1129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Techari | Mentee Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-  <link rel="stylesheet" href="css/mentee-dashboard.css">
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <script src="js/mentee-dashboard.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techari - Mentee Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fb;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .brand-name {
+          font-size: 1.7rem;
+          font-weight: 630;
+          color: #333;
+          margin-left: 0.5rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mentor-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .mentor-details h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .mentor-details p {
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            gap: 0;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0 2rem;
+            position: sticky;
+            top: 73px; /* Adjust based on header height */
+            z-index: 99;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .nav-tab:hover:not(.active) {
+            color: #333;
+        }
+
+        /* Remove default margin from h1 */
+        h1 {
+            margin: 0;
+        }
+
+        /* Reset body and html margins/padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            color: #374151;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #8b5fbf;
+            box-shadow: 0 0 0 3px rgba(139, 95, 191, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            height: 45px;
+            
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #8B5CF6;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #8b5fbf;
+        }
+
+        .mentors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .mentor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .mentor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .mentor-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .mentor-avatar {
+            width: 87px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .mentor-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .mentor-role {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .skill-tag {
+            background: rgba(139, 95, 191, 0.1);
+            color: linear-gradient(135deg, #8B5CF6, #A855F7);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 200px;
+        }
+
+        .sessions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .session-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .session-item:hover {
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .session-pending {
+            border-left-color: #ffa726;
+        }
+
+        .session-confirmed {
+            border-left-color: #66bb6a;
+        }
+
+        .session-completed {
+            border-left-color: #42a5f5;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .session-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(255, 167, 38, 0.1);
+            color: #ffa726;
+        }
+
+        .status-confirmed {
+            background: rgba(102, 187, 106, 0.1);
+            color: #66bb6a;
+        }
+
+        .status-completed {
+            background: rgba(66, 165, 245, 0.1);
+            color: #42a5f5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #8B5CF6;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-tabs {
+                order: -1;
+            }
+
+            .mentors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-filters {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 min-h-screen">
-  <header class="bg-white border-b border-purple-100 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-          <i class="lucide lucide-heart text-white w-5 h-5"></i>
+<body>
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">T</div>
+                <h1 class="brand-name">Techari</h1>
+            </div>
+            <div class="header-right">
+                <div class="mentor-info">
+                    <div class="avatar">JS</div>
+                    <div class="mentor-details">
+                        <h3>Jessica Smith</h3>
+                        <p>Mentee</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav-bar">
+            <button class="nav-tab active" onclick="showScreen('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="showScreen('mentors')">Find Mentors</button>
+            <button class="nav-tab" onclick="showScreen('sessions')">My Sessions</button>
+            <button class="nav-tab" onclick="showScreen('progress')">Progress</button>
+            <button class="nav-tab" onclick="showScreen('profile')">Profile</button>
+        </nav>
+    <div class="container">
+        <!-- Dashboard Screen -->
+        <div id="dashboard" class="screen active">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Welcome to Techari, Jessica!</h1>
+                <p class="welcome-subtitle">Your journey in tech starts here. Connect with amazing mentors and grow your skills.</p>
+            </div>
+
+            <div class="progress-stats">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Total Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Active Mentors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">85%</div>
+                    <div class="stat-label">Goal Progress</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Activity</h2>
+                <div class="sessions-list">
+                    <div class="session-item session-pending">
+                        <div class="session-header">
+                            <div>
+                                <h4>React Fundamentals Session with Sarah Chen</h4>
+                                <p style="color: #666; margin: 5px 0;">Scheduled for Tomorrow, 2:00 PM</p>
+                            </div>
+                            <span class="session-status status-pending">Pending</span>
+                        </div>
+                        <p>Introduction to React components and state management</p>
+                    </div>
+                    <div class="session-item session-confirmed">
+                        <div class="session-header">
+                            <div>
+                                <h4>Career Guidance with Maria Rodriguez</h4>
+                                <p style="color: #666; margin: 5px 0;">Friday, 3:00 PM</p>
+                            </div>
+                            <span class="session-status status-confirmed">Confirmed</span>
+                        </div>
+                        <p>Discussing career paths in software engineering</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h1 class="text-xl font-bold gradient-title">Techari</h1>
-      </div>
-      <div class="flex items-center gap-4">
-        <button class="relative p-2 rounded-full hover:bg-purple-50">
-          <i class="lucide lucide-bell text-gray-600"></i>
-          <span class="absolute -top-1 -right-1 w-3 h-3 bg-pink-500 rounded-full"></span>
-        </button>
-        <button class="p-2 rounded-full hover:bg-purple-50">
-          <i class="lucide lucide-settings text-gray-600"></i>
-        </button>
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-            <i class="lucide lucide-user text-white w-5 h-5"></i>
-          </div>
-          <div>
-            <p class="text-sm font-medium text-gray-900" id="menteeName">Mentee Name</p>
-            <p class="text-xs text-gray-500">Mentee</p>
-          </div>
+
+        <!-- Find Mentors Screen -->
+        <div id="mentors" class="screen">
+            <div class="card">
+                <h2>Find Your Perfect Mentor</h2>
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label>Search by Name or Skill</label>
+                        <input type="text" class="form-control" placeholder="e.g. JavaScript, React, UX Design" id="mentorSearch">
+                    </div>
+                    <div class="filter-group">
+                        <label>Tech Interest</label>
+                        <select class="form-control" id="techInterest">
+                            <option value="">All Areas</option>
+                            <option value="frontend">Frontend Development</option>
+                            <option value="backend">Backend Development</option>
+                            <option value="fullstack">Full Stack Development</option>
+                            <option value="mobile">Mobile Development</option>
+                            <option value="ux">UX/UI Design</option>
+                            <option value="data">Data Science</option>
+                            <option value="ml">Machine Learning</option>
+                            <option value="devops">DevOps</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Availability</label>
+                        <select class="form-control" id="availability">
+                            <option value="">Any Time</option>
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="evening">Evening</option>
+                            <option value="weekend">Weekends</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mentors-grid" id="mentorsGrid">
+                    <!-- Mentors will be populated here by JavaScript -->
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </header>
 
-  <nav class="bg-white border-b border-purple-100">
-    <div class="max-w-7xl mx-auto px-4 flex gap-6 py-2">
-      <button class="tab-link active flex items-center gap-2 text-purple-600 font-medium border-b-2 border-purple-500 py-2">
-        <i class="lucide lucide-trending-up w-4 h-4"></i> Overview
-      </button>
-      <button class="tab-link flex items-center gap-2 text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 py-2">
-        <i class="lucide lucide-search w-4 h-4"></i> Find Mentors
-      </button>
-      <button class="tab-link flex items-center gap-2 text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 py-2">
-        <i class="lucide lucide-calendar w-4 h-4"></i> My Sessions
-      </button>
-      <button class="tab-link flex items-center gap-2 text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 py-2">
-        <i class="lucide lucide-award w-4 h-4"></i> Progress
-      </button>
-    </div>
-  </nav>
+        <!-- My Sessions Screen -->
+        <div id="sessions" class="screen">
+            <div class="card">
+                <h2>My Sessions</h2>
+                <div class="sessions-list">
+                    <div class="session-item session-pending">
+                        <div class="session-header">
+                            <div>
+                                <h4>React Fundamentals with Sarah Chen</h4>
+                                <p style="color: #666; margin: 5px 0;">Tomorrow, July 22, 2025 at 2:00 PM</p>
+                            </div>
+                            <span class="session-status status-pending">Pending Approval</span>
+                        </div>
+                        <p><strong>Topic:</strong> Introduction to React components and state management</p>
+                        <p><strong>Your Message:</strong> Hi Sarah! I'm excited to learn React. I have basic JavaScript knowledge and would love to understand components better.</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-secondary" onclick="cancelSession()">Cancel Request</button>
+                        </div>
+                    </div>
 
-  <main class="max-w-7xl mx-auto px-4 py-8">
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-1" id="welcomeText">Welcome back, Mentee!</h2>
-      <p class="text-gray-600" id="menteeTrack">Continue your journey in your chosen track</p>
+                    <div class="session-item session-confirmed">
+                        <div class="session-header">
+                            <div>
+                                <h4>Career Guidance with Maria Rodriguez</h4>
+                                <p style="color: #666; margin: 5px 0;">Friday, July 25, 2025 at 3:00 PM</p>
+                            </div>
+                            <span class="session-status status-confirmed">Confirmed</span>
+                        </div>
+                        <p><strong>Topic:</strong> Career paths in software engineering</p>
+                        <p><strong>Meeting Link:</strong> <a href="#" style="color: #667eea;">Join Google Meet</a></p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn" onclick="markComplete()">Mark as Complete</button>
+                            <button class="btn btn-secondary" onclick="rescheduleSession()">Reschedule</button>
+                        </div>
+                    </div>
+
+                    <div class="session-item session-completed">
+                        <div class="session-header">
+                            <div>
+                                <h4>JavaScript Basics with Alex Kim</h4>
+                                <p style="color: #666; margin: 5px 0;">July 18, 2025 at 1:00 PM</p>
+                            </div>
+                            <span class="session-status status-completed">Completed</span>
+                        </div>
+                        <p><strong>Topic:</strong> Variables, functions, and DOM manipulation</p>
+                        <p><strong>Your Notes:</strong> Learned about let/const, arrow functions, and how to select DOM elements. Need to practice more with event handlers.</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-secondary" onclick="viewSessionDetails()">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Screen -->
+        <div id="progress" class="screen">
+            <div class="progress-stats">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Completed Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Hours of Mentorship</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Skills Learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Active Goals</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Learning Journey</h2>
+                <div class="sessions-list">
+                    <div class="session-item session-completed">
+                        <div class="session-header">
+                            <div>
+                                <h4>HTML & CSS Foundations</h4>
+                                <p style="color: #666; margin: 5px 0;">Completed July 10, 2025</p>
+                            </div>
+                            <span class="session-status status-completed">Completed</span>
+                        </div>
+                        <p><strong>Mentor:</strong> Lisa Wang</p>
+                        <p><strong>Skills Gained:</strong> Semantic HTML, CSS Grid, Flexbox, Responsive Design</p>
+                        <p><strong>Key Takeaway:</strong> Understanding the box model was crucial for layout design.</p>
+                    </div>
+
+                    <div class="session-item session-completed">
+                        <div class="session-header">
+                            <div>
+                                <h4>JavaScript Fundamentals</h4>
+                                <p style="color: #666; margin: 5px 0;">Completed July 18, 2025</p>
+                            </div>
+                            <span class="session-status status-completed">Completed</span>
+                        </div>
+                        <p><strong>Mentor:</strong> Alex Kim</p>
+                        <p><strong>Skills Gained:</strong> Variables, Functions, DOM Manipulation, Event Handling</p>
+                        <p><strong>Key Takeaway:</strong> Practice is essential for mastering JavaScript concepts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Current Goals</h2>
+                <div style="margin-top: 20px;">
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Learn React Framework</h4>
+                        <div style="background: #f3f4f6; border-radius: 10px; height: 10px; overflow: hidden;">
+                            <div style="background: #8B5CF6; height: 100%; width: 60%; border-radius: 10px;"></div>
+                        </div>
+                        <p style="margin-top: 5px; color: #666; font-size: 14px;">60% Complete - Next session with Sarah Chen</p>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 10px;">Build Portfolio Website</h4>
+                        <div style="background: #f3f4f6; border-radius: 10px; height: 10px; overflow: hidden;">
+                            <div style="background: #8B5CF6; height: 100%; width: 25%; border-radius: 10px;"></div>
+                        </div>
+                        <p style="margin-top: 5px; color: #666; font-size: 14px;">25% Complete - Planning phase</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profile" class="screen">
+            <div class="card">
+                <h2>My Profile</h2>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" value="Jessica Smith" id="fullName">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" value="jessica.smith@email.com" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" class="form-control" value="+1 (555) 123-4567" id="phone">
+                    </div>
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea class="form-control" rows="4" id="bio" placeholder="Tell us about yourself, your goals, and what you're looking to learn...">Aspiring frontend developer passionate about creating user-friendly web applications. Currently learning JavaScript and looking to master React. Background in marketing with a desire to transition into tech.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Tech Interests</label>
+                        <select class="form-control" id="interests" multiple>
+                            <option value="frontend" selected>Frontend Development</option>
+                            <option value="backend">Backend Development</option>
+                            <option value="fullstack">Full Stack Development</option>
+                            <option value="mobile">Mobile Development</option>
+                            <option value="ux" selected>UX/UI Design</option>
+                            <option value="data">Data Science</option>
+                            <option value="ml">Machine Learning</option>
+                            <option value="devops">DevOps</option>
+                        </select>
+                        <small style="color: #666;">Hold Ctrl/Cmd to select multiple interests</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Available Times</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" checked> Weekday Mornings
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox"> Weekday Afternoons
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" checked> Weekday Evenings
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" checked> Weekend Mornings
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox"> Weekend Afternoons
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox"> Weekend Evenings
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn">Save Profile</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-purple-100">
-        <p class="text-gray-600 text-sm">Completed Sessions</p>
-        <p class="text-2xl font-bold text-purple-600" id="completedSessions">0</p>
-        <p class="text-xs text-gray-500 mt-1">This month</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-purple-100">
-        <p class="text-gray-600 text-sm">Upcoming Sessions</p>
-        <p class="text-2xl font-bold text-purple-600" id="upcomingSessions">0</p>
-        <p class="text-xs text-gray-500 mt-1">This week</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-purple-100">
-        <p class="text-gray-600 text-sm">Progress</p>
-        <p class="text-2xl font-bold text-pink-600" id="progressPercent">0%</p>
-        <p class="text-xs text-gray-500 mt-1">Overall completion</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-purple-100">
-        <p class="text-gray-600 text-sm">Mentors</p>
-        <p class="text-2xl font-bold text-purple-600" id="activeMentors">0</p>
-        <p class="text-xs text-gray-500 mt-1">Active connections</p>
-      </div>
+    <!-- Session Request Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeSessionModal()">&times;</span>
+            <h2>Request Mentorship Session</h2>
+            <form id="sessionRequestForm">
+                <div class="form-group">
+                    <label>Mentor</label>
+                    <input type="text" class="form-control" id="mentorName" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Date</label>
+                    <input type="date" class="form-control" id="sessionDate" min="">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Time</label>
+                    <input type="time" class="form-control" id="sessionTime">
+                </div>
+                <div class="form-group">
+                    <label>Session Topic</label>
+                    <input type="text" class="form-control" id="sessionTopic" placeholder="e.g., React Components, Career Advice">
+                </div>
+                <div class="form-group">
+                    <label>Message to Mentor</label>
+                    <textarea class="form-control" rows="4" id="sessionMessage" placeholder="Introduce yourself and explain what you'd like to learn or discuss..."></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn">Send Request</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeSessionModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-purple-100">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-      <ul class="space-y-3" id="recentActivity">
-        <!-- Recent activity will be dynamically loaded here -->
-      </ul>
-    </div>
-  </main>
+    <script>
+        // Sample mentor data
+        const mentors = [
+            {
+                name: "Sarah Chen",
+                role: "Senior Frontend Developer at Google",
+                avatar: "SC",
+                skills: ["React", "JavaScript", "TypeScript", "CSS"],
+                bio: "5+ years in frontend development. Passionate about mentoring women in tech.",
+                availability: "Evenings & Weekends",
+                rating: 4.9
+            },
+            {
+                name: "Maria Rodriguez",
+                role: "Engineering Manager at Microsoft",
+                avatar: "MR",
+                skills: ["Leadership", "Career Growth", "Full Stack", "Team Management"],
+                bio: "Leading teams of 15+ developers. Love helping others navigate their tech careers.",
+                availability: "Flexible",
+                rating: 4.8
+            },
+            {
+                name: "Alex Kim",
+                role: "Full Stack Developer at Stripe",
+                avatar: "AK",
+                skills: ["JavaScript", "Node.js", "Python", "MongoDB"],
+                bio: "Full stack developer with expertise in modern web technologies. Patient teacher.",
+                availability: "Mornings & Afternoons",
+                rating: 4.7
+            },
+            {
+                name: "Lisa Wang",
+                role: "UX Designer at Adobe",
+                avatar: "LW",
+                skills: ["UI/UX Design", "Figma", "User Research", "Prototyping"],
+                bio: "Design systems expert. Helping designers transition into tech leadership roles.",
+                availability: "Evenings",
+                rating: 4.9
+            },
+            {
+                name: "Jennifer Park",
+                role: "Data Scientist at Netflix",
+                avatar: "JP",
+                skills: ["Python", "Machine Learning", "Data Analysis", "SQL"],
+                bio: "PhD in Computer Science. Passionate about making data science accessible.",
+                availability: "Weekends",
+                rating: 4.8
+            },
+            {
+                name: "Amanda Foster",
+                role: "DevOps Engineer at Amazon",
+                avatar: "AF",
+                skills: ["AWS", "Docker", "Kubernetes", "CI/CD"],
+                bio: "Cloud infrastructure specialist. Love teaching others about DevOps practices.",
+                availability: "Flexible",
+                rating: 4.6
+            }
+        ];
+
+        let currentMentor = null;
+
+        // Navigation functions
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Load mentors on page load
+        function loadMentors() {
+            const mentorsGrid = document.getElementById('mentorsGrid');
+            mentorsGrid.innerHTML = '';
+            
+            mentors.forEach(mentor => {
+                const mentorCard = document.createElement('div');
+                mentorCard.className = 'mentor-card';
+                mentorCard.innerHTML = `
+                    <div class="mentor-header">
+                        <div class="mentor-avatar">${mentor.avatar}</div>
+                        <div class="mentor-info">
+                            <h3>${mentor.name}</h3>
+                            <div class="mentor-role">${mentor.role}</div>
+                            <div style="color: #ffa726; font-size: 14px; margin-top: 5px;">
+                                ★ ${mentor.rating} • Available: ${mentor.availability}
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color: #666; margin-bottom: 15px;">${mentor.bio}</p>
+                    <div class="skills">
+                        ${mentor.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="btn" onclick="requestSession('${mentor.name}')">Request Session</button>
+                        <button class="btn btn-secondary" onclick="viewMentorProfile('${mentor.name}')">View Profile</button>
+                    </div>
+                `;
+                mentorsGrid.appendChild(mentorCard);
+            });
+        }
+
+        // Session request functions
+        function requestSession(mentorName) {
+            currentMentor = mentors.find(m => m.name === mentorName);
+            document.getElementById('mentorName').value = mentorName;
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sessionDate').min = today;
+            
+            document.getElementById('sessionModal').classList.add('active');
+        }
+
+        function closeSessionModal() {
+            document.getElementById('sessionModal').classList.remove('active');
+            document.getElementById('sessionRequestForm').reset();
+        }
+
+        // Handle session request form submission
+        document.getElementById('sessionRequestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const sessionData = {
+                mentor: document.getElementById('mentorName').value,
+                date: document.getElementById('sessionDate').value,
+                time: document.getElementById('sessionTime').value,
+                topic: document.getElementById('sessionTopic').value,
+                message: document.getElementById('sessionMessage').value
+            };
+            
+            // Simulate sending request
+            alert(`Session request sent to ${sessionData.mentor}!\n\nDate: ${sessionData.date}\nTime: ${sessionData.time}\nTopic: ${sessionData.topic}`);
+            
+            closeSessionModal();
+            
+            // Switch to sessions tab to show the new request
+            showScreen('sessions');
+            document.querySelector('[onclick="showScreen(\'sessions\')"]').classList.add('active');
+        });
+
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const profileData = {
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                bio: document.getElementById('bio').value,
+                interests: Array.from(document.getElementById('interests').selectedOptions).map(o => o.value)
+            };
+            
+            // Update user avatar initials
+            const initials = profileData.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('userAvatar').textContent = initials;
+            
+            // Show success message
+            alert('Profile updated successfully!');
+        });
+
+        // Search and filter functionality
+        document.getElementById('mentorSearch').addEventListener('input', filterMentors);
+        document.getElementById('techInterest').addEventListener('change', filterMentors);
+        document.getElementById('availability').addEventListener('change', filterMentors);
+
+        function filterMentors() {
+            const searchTerm = document.getElementById('mentorSearch').value.toLowerCase();
+            const techInterest = document.getElementById('techInterest').value;
+            const availability = document.getElementById('availability').value;
+            
+            const mentorsGrid = document.getElementById('mentorsGrid');
+            const mentorCards = mentorsGrid.querySelectorAll('.mentor-card');
+            
+            mentorCards.forEach((card, index) => {
+                const mentor = mentors[index];
+                let show = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    const searchMatch = mentor.name.toLowerCase().includes(searchTerm) ||
+                                      mentor.skills.some(skill => skill.toLowerCase().includes(searchTerm)) ||
+                                      mentor.bio.toLowerCase().includes(searchTerm);
+                    if (!searchMatch) show = false;
+                }
+                
+                // Tech interest filter
+                if (techInterest) {
+                    const interestMap = {
+                        'frontend': ['React', 'JavaScript', 'CSS', 'TypeScript'],
+                        'backend': ['Node.js', 'Python', 'MongoDB'],
+                        'ux': ['UI/UX Design', 'Figma', 'User Research', 'Prototyping'],
+                        'data': ['Python', 'Machine Learning', 'Data Analysis', 'SQL'],
+                        'devops': ['AWS', 'Docker', 'Kubernetes', 'CI/CD']
+                    };
+                    
+                    const relevantSkills = interestMap[techInterest] || [];
+                    const hasRelevantSkills = mentor.skills.some(skill => 
+                        relevantSkills.includes(skill)
+                    );
+                    
+                    if (!hasRelevantSkills) show = false;
+                }
+                
+                // Availability filter (simplified)
+                if (availability) {
+                    const availabilityMatch = mentor.availability.toLowerCase().includes(availability) ||
+                                            mentor.availability.toLowerCase().includes('flexible');
+                    if (!availabilityMatch) show = false;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Session management functions
+        function cancelSession() {
+            if (confirm('Are you sure you want to cancel this session request?')) {
+                alert('Session request cancelled.');
+            }
+        }
+
+        function markComplete() {
+            if (confirm('Mark this session as completed?')) {
+                alert('Session marked as completed! You can now add session notes.');
+            }
+        }
+
+        function rescheduleSession() {
+            alert('Reschedule request sent to mentor. They will respond with new available times.');
+        }
+
+        function viewSessionDetails() {
+            alert('Session Details:\n\nDuration: 60 minutes\nTopics Covered: Variables, Functions, DOM\nNext Steps: Practice event handlers\nRating: 5/5 stars');
+        }
+
+        function viewMentorProfile(mentorName) {
+            const mentor = mentors.find(m => m.name === mentorName);
+            alert(`${mentor.name}\n${mentor.role}\n\nBio: ${mentor.bio}\n\nSkills: ${mentor.skills.join(', ')}\n\nRating: ${mentor.rating}/5\nAvailability: ${mentor.availability}`);
+        }
+
+        function cancelEdit() {
+            if (confirm('Discard changes to your profile?')) {
+                // Reset form to original values
+                document.getElementById('profileForm').reset();
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMentors();
+            
+            // Close modal when clicking outside
+            document.getElementById('sessionModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSessionModal();
+                }
+            });
+        });
+
+        // Simulate real-time updates
+        setInterval(function() {
+            // Update stats randomly (simulate activity)
+            const statNumbers = document.querySelectorAll('.stat-number');
+            // This would normally come from real data
+        }, 30000);
+    </script>
 </body>
 </html>
