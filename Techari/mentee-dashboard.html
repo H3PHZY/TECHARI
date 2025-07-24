@@ -449,7 +449,7 @@ const mentors = [
     rating: 4.6
   },
   {
-    name: "Moses Wambua",
+    name: "May Wambua",
     role: "Cloud Engineer at Microsoft Africa",
     avatar: "MW",
     skills: ["Azure", "CI/CD", "Terraform", "Containers"],
@@ -955,9 +955,10 @@ const mentors = [
         }
 
         function viewMentorProfile(mentorName) {
-            const mentor = mentors.find(m => m.name === mentorName);
-            alert(`${mentor.name}\n${mentor.role}\n\nBio: ${mentor.bio}\n\nSkills: ${mentor.skills.join(', ')}\n\nRating: ${mentor.rating}/5\nAvailability: ${mentor.availability}`);
+            const encodedName = encodeURIComponent(mentorName);
+            window.location.href = `mentor1.html?name=${encodedName}`;
         }
+
 
         function cancelEdit() {
             if (confirm('Discard changes to your profile?')) {

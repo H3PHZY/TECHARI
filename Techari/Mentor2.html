@@ -191,43 +191,41 @@
         <div class="profile-content">
 
 
-            <img src="assets/kwame-mensah.jpg" alt="Profile" class="profile-image">
+            <img src="assets/businesswoman-executive-professional-success-concept.jpg" alt="Profile" class="profile-image">
             
-            <h1 class="profile-name">Kwame Mensah</h1>
-            <p class="profile-location">San Francisco, United States</p>
+            <h1 class="profile-name">Tariro Chikafu</h1>
+            <p class="profile-location">Accra, Ghana</p>
             
             <div class="rating">
                 <span class="star">⭐</span>
-                <span class="rating-text">4.8 • Available: Evenings (WAT)</span>
+                <span class="rating-text">4.7 • Available: Weekends (WAT)</span>
             </div>
             
-            <p class="profile-title">Full Stack Developer</p>
-            <p class="profile-company">Senior Engineer at Flutterwave</p>
+            <p class="profile-title">Frontend Engineer</p>
+            <p class="profile-company">Engineer at ZimSwitch</p>
             
             <div class="bio">
-                Passionate about building scalable web applications and mentoring junior developers. I love helping others grow their technical skills and navigate their career journey in tech.
+                Zimbabwean code artist building sleek user interfaces
             </div>
 
             <div class="skills">
-                <span class="skill-tag">JavaScript</span>
-                <span class="skill-tag">Node.js</span>
+                <span class="skill-tag">CSS</span>
+                <span class="skill-tag">Next.js</span>
                 <span class="skill-tag">React</span>
-                <span class="skill-tag">MongoDB</span>
-                <span class="skill-tag">Python</span>
-                <span class="skill-tag">AWS</span>
+                <span class="skill-tag">Redux</span>
             </div>
             
             <div class="stats-container">
                 <div class="stat">
-                    <span class="stat-number">127</span>
+                    <span class="stat-number">80</span>
                     <span class="stat-label">Mentees</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number">4.8</span>
+                    <span class="stat-number">4.7</span>
                     <span class="stat-label">Rating</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number">2.5k</span>
+                    <span class="stat-number">1k</span>
                     <span class="stat-label">Sessions</span>
                 </div>
             </div>
@@ -235,34 +233,5 @@
             <button class="show-more-btn">Request Session</button>
         </div>
     </div>
-
-    <script>
-  const mentors = [
-    {
-      name: "Kwame Mensah",
-      role: "Full Stack Developer",
-      avatar: "KM",
-      skills: ["JavaScript", "Node.js", "React", "MongoDB"],
-      bio: "Passionate about building scalable web applications and mentoring junior developers.",
-      availability: "Evenings (WAT)",
-      rating: 4.8
-    },
-
-  const params = new URLSearchParams(window.location.search);
-  const name = decodeURIComponent(params.get("name"));
-  const mentor = mentors.find(m => m.name === name);
-
-  if (mentor) {
-    document.getElementById("mentorName").textContent = mentor.name;
-    document.getElementById("mentorRole").textContent = mentor.role;
-    document.getElementById("mentorBio").textContent = mentor.bio;
-    document.getElementById("mentorSkills").textContent = mentor.skills.join(", ");
-    document.getElementById("mentorAvailability").textContent = mentor.availability;
-    document.getElementById("mentorRating").textContent = mentor.rating;
-  } else {
-    document.body.innerHTML = "<p>Mentor not found.</p>";
-  }
-</script>
-
 </body>
 </html>
