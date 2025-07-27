@@ -72,14 +72,6 @@ def about():
     else:
         raise HTTPException(status_code=404, detail="About page not found")
 
-@app.get("/index", response_class=HTMLResponse)
-def index():
-    index_path = os.path.join(project_dir, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    else:
-        raise HTTPException(status_code=404, detail="Index page not found")
-
 # Serve any HTML file dynamically
 @app.get("/{page_name}", response_class=HTMLResponse)
 def serve_page(page_name: str):
