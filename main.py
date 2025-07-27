@@ -26,7 +26,7 @@ if os.path.exists("Techari") and os.path.isdir("Techari"):
     print(" Found Techari subdirectory - using that as project root")
 
 # Mount the project directory as static files
-app.mount("/", StaticFiles(directory=project_dir, html=True), name="static_root")
+#app.mount("/", StaticFiles(directory=project_dir, html=True), name="static_root")
 
 # Simple models
 class ContactForm(BaseModel):
@@ -124,9 +124,9 @@ if __name__ == "__main__":
         html_files = [f for f in os.listdir(project_dir) if f.endswith('.html')]
         if html_files:
             for file in html_files:
-                print(f"   ✅ {file}")
+                print(f"    {file}")
         else:
-            print("   ❌ No HTML files found")
+            print("    No HTML files found")
         
         print(f" Available directories in {project_dir}:")
         dirs = [d for d in os.listdir(project_dir) if os.path.isdir(os.path.join(project_dir, d)) and not d.startswith('.')]
