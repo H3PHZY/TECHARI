@@ -26,7 +26,7 @@ if os.path.exists("Techari") and os.path.isdir("Techari"):
     print(" Found Techari subdirectory - using that as project root")
 
 # Mount the project directory as static files
-#app.mount("/", StaticFiles(directory=project_dir, html=True), name="static_root")
+app.mount("/", StaticFiles(directory=project_dir, html=True), name="static_root")
 
 # Simple models
 class ContactForm(BaseModel):
