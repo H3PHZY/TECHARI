@@ -1,0 +1,488 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* --- Color Palette --- */
+:root {
+  --bg-main: #F5D5E0;         /* Soft, feminine background */
+  --primary: #6667AB;         /* Calm, professional (main buttons, links) */
+  --secondary: #7B337E;       /* Bold, empowering (hover, highlights) */
+  --card: #fff;               /* Card/container background */
+  --shadow: #420D4B;          /* Deep, focused (shadows, borders) */
+  --footer: #210635;          /* Elegant, techy (footer, contrast) */
+  --text-dark: #210635;       /* For headings and main text */
+  --mentor: #6667AB;          /* Mentor button (same as primary) */
+  --mentee: #7B337E;          /* Mentee button (same as secondary) */
+}
+
+/* Backgrounds */
+body {
+  
+  color: var(--text-dark);
+}
+
+/* Cards/Containers */
+.container {
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--shadow);
+  padding: 2em;
+  margin-top: 2em;
+}
+
+/* Headings */
+h2, h3 {
+  color: var(--secondary);
+  text-align: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit; /* Use the same color as the surrounding text */
+}
+
+/* Inputs */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="url"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Primary Buttons */
+button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+button:hover {
+  background: var(--secondary);
+}
+
+/* Role-Specific Buttons */
+.mentor-btn {
+  background: var(--mentor);
+}
+
+.mentor-btn:hover {
+  background: var(--secondary);
+}
+
+.mentee-btn {
+  background: var(--mentee);
+}
+
+.mentee-btn:hover {
+  background: var(--primary);
+}
+
+/* Message */
+#message {
+  color: red;
+  text-align: center;
+}
+
+/* Footer */
+footer {
+  background: var(--footer);
+  color: #fff;
+  padding: 1em 0;
+  text-align: center;
+  margin-top: 3em;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    width: 95%;
+  }
+}
+
+
+
+
+/* Add these styles to your existing css/style.css file */
+
+#profileMessage {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#profileMessage.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+#profileMessage.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+#profileMessage.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Loading animation for the submit button */
+#profileForm button[type="submit"]:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Form styling improvements */
+#profileForm {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#profileForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+#profileForm input,
+#profileForm select,
+#profileForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#profileForm input:focus,
+#profileForm select:focus,
+#profileForm textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+#profileForm button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#profileForm button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+
+/* Google Calendar Integration Styles */
+
+#googleCalendarIntegration {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    margin-top: 2em;
+}
+
+#googleCalendarIntegration h3 {
+    color: #343a40;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+#googleCalendarIntegration h3::before {
+    content: "📅";
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+#connectGoogleCalendar {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#connectGoogleCalendar:hover {
+    background-color: #3367d6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
+}
+
+#connectGoogleCalendar.connected {
+    background-color: #34a853;
+}
+
+#connectGoogleCalendar.connected:hover {
+    background-color: #2d8f47;
+}
+
+#connectGoogleCalendar::before {
+    content: "🔗";
+    font-size: 1.1em;
+}
+
+#connectGoogleCalendar.connected::before {
+    content: "✅";
+}
+
+/* Calendar Status Styles */
+.calendar-status {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.calendar-status.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.calendar-status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.calendar-status.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.calendar-status.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+/* Calendar Events Display */
+.calendar-events {
+    margin-top: 20px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.calendar-events h4 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.calendar-events ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.calendar-event {
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #4285f4;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.calendar-event:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
+}
+
+.calendar-event strong {
+    color: #343a40;
+    font-size: 1.05em;
+}
+
+.event-time {
+    color: #6c757d;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* Sync Button Styles */
+.sync-btn {
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.sync-btn:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+}
+
+.sync-btn::before {
+    content: "🔄";
+    margin-right: 8px;
+}
+
+/* Conflict Indicator Styles */
+.conflict {
+    background-color: #fff3cd !important;
+    border-left-color: #ffc107 !important;
+}
+
+.conflict-indicator {
+    color: #856404;
+    font-size: 0.9em;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+/* Availability List Enhancements */
+#availabilityList li {
+    position: relative;
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #28a745;
+    transition: all 0.2s ease;
+}
+
+#availabilityList li:hover {
+    background-color: #e9ecef;
+}
+
+#availabilityList li.conflict {
+    border-left-color: #ffc107;
+}
+
+/* Loading Animation */
+.loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #4285f4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #googleCalendarIntegration {
+        padding: 15px;
+        margin-top: 1.5em;
+    }
+    
+    #connectGoogleCalendar {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .calendar-events {
+        padding: 10px;
+    }
+    
+    .calendar-event {
+        padding: 8px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    #googleCalendarIntegration {
+        background-color: #343a40;
+        border-color: #495057;
+    }
+    
+    .calendar-events {
+        background-color: #495057;
+        border-color: #6c757d;
+    }
+    
+    .calendar-event {
+        background-color: #6c757d;
+        color: #fff;
+    }
+    
+    .calendar-status.success {
+        background-color: #155724;
+        color: #d4edda;
+    }
+    
+    .calendar-status.error {
+        background-color: #721c24;
+        color: #f8d7da;
+    }
+    
+    .calendar-status.info {
+        background-color: #0c5460;
+        color: #d1ecf1;
+    }
+}

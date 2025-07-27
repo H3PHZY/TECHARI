@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Profile - Techari</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #8B5CF6, #A855F7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-circles {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .background-circles::before {
+            content: '';
+            position: absolute;
+            top: 100px;
+            right: 50px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .profile-location {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .profile-title {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .profile-company {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            display: block;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .show-more-btn {
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .show-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 15px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 16px;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .skill-tag {
+            background: #f0f0f0;
+            color: #666;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .bio {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #8B5CF6;
+        }
+
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            color: #666;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #8B5CF6;
+            border: 2px solid #8B5CF6;
+        }
+
+        .btn-secondary:hover {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="background-circles"></div>
+        
+        <div class="profile-content">
+            <img src="assets/kwame-mensah.jpg" alt="Profile" class="profile-image">
+            
+            <h1 class="profile-name">Kwame Mensah</h1>
+            <p class="profile-location">San Francisco, United States</p>
+            
+            <div class="rating">
+                <span class="star">⭐</span>
+                <span class="rating-text">4.8 • Available: Evenings (WAT)</span>
+            </div>
+            
+            <p class="profile-title">Full Stack Developer</p>
+            <p class="profile-company">Senior Engineer at Flutterwave</p>
+            
+            <div class="bio">
+                Passionate about building scalable web applications and mentoring junior developers. I love helping others grow their technical skills and navigate their career journey in tech.
+            </div>
+
+            <div class="skills">
+                <span class="skill-tag">JavaScript</span>
+                <span class="skill-tag">Node.js</span>
+                <span class="skill-tag">React</span>
+                <span class="skill-tag">MongoDB</span>
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">AWS</span>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat">
+                    <span class="stat-number">127</span>
+                    <span class="stat-label">Mentees</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">4.8</span>
+                    <span class="stat-label">Rating</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">2.5k</span>
+                    <span class="stat-label">Sessions</span>
+                </div>
+            </div>
+            
+            <button class="show-more-btn" onclick="openSessionModal()">Request Session</button>
+        </div>
+    </div>
+
+    <!-- Session Request Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeSessionModal()">&times;</button>
+            <h2>Request Mentorship Session</h2>
+            <form id="sessionRequestForm">
+                <div class="form-group">
+                    <label>Mentor</label>
+                    <input type="text" class="form-control" id="mentorName" value="Kwame Mensah" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Date</label>
+                    <input type="date" class="form-control" id="sessionDate" min="">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Time</label>
+                    <input type="time" class="form-control" id="sessionTime">
+                </div>
+                <div class="form-group">
+                    <label>Session Topic</label>
+                    <input type="text" class="form-control" id="sessionTopic" placeholder="e.g., React Components, Career Advice">
+                </div>
+                <div class="form-group">
+                    <label>Message to Mentor</label>
+                    <textarea class="form-control" rows="4" id="sessionMessage" placeholder="Introduce yourself and explain what you'd like to learn or discuss..."></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn">Send Request</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeSessionModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sessionDate').min = today;
+        });
+
+        // Open session modal
+        function openSessionModal() {
+            document.getElementById('sessionModal').classList.add('active');
+        }
+
+        // Close session modal
+        function closeSessionModal() {
+            document.getElementById('sessionModal').classList.remove('active');
+            document.getElementById('sessionRequestForm').reset();
+        }
+
+        // Handle form submission
+        document.getElementById('sessionRequestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                mentor: document.getElementById('mentorName').value,
+                date: document.getElementById('sessionDate').value,
+                time: document.getElementById('sessionTime').value,
+                topic: document.getElementById('sessionTopic').value,
+                message: document.getElementById('sessionMessage').value
+            };
+            
+            // Validate required fields
+            if (!formData.date || !formData.time || !formData.topic || !formData.message) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Simulate sending request
+            alert(`Session request sent to ${formData.mentor}!\n\nDate: ${formData.date}\nTime: ${formData.time}\nTopic: ${formData.topic}`);
+            
+            closeSessionModal();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('sessionModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSessionModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSessionModal();
+            }
+        });
+    </script>
+</body>
+</html>

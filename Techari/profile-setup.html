@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - Techari</title>
+  <link rel="stylesheet" href="css/signup.css"/>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+  <div class="signup-container">
+    <div class="header">
+      <div class="logo">Techari</div>
+      <div class="subtitle">Join the mentorship community</div>
+    </div>
+    
+    <div class="form-container">
+      <form id="signupForm">
+        <div class="form-group">
+          <label>I want to join as:</label>
+          <div class="role-buttons">
+            <div class="role-btn" data-role="mentor">Mentor</div>
+            <div class="role-btn" data-role="mentee">Mentee</div>
+          </div>
+          <input type="hidden" id="role" name="role" required>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" required placeholder="Enter your full name">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email address">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required placeholder="Create a strong password">
+        </div>
+
+        <div class="form-group">
+          <label for="photo">Profile Photo</label>
+          <div class="file-upload-container">
+            <label for="photo" class="file-upload-label" id="photoLabel">
+              <span class="file-upload-text">Click to upload profile photo</span>
+            </label>
+            <input type="file" id="photo" name="photo" class="file-upload-input" accept="image/*">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="interests">Areas of Interest</label>
+          <input type="text" id="interests" name="interests" placeholder="e.g. Web Development, AI, Data Science">
+        </div>
+
+        <div class="form-group">
+          <label for="bio">About You</label>
+          <textarea id="bio" name="bio" placeholder="Tell us a bit about yourself and your goals..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="availability">Availability</label>
+          <select id="availability" name="availability" required>
+            <option value="">Select your availability</option>
+            <option value="weekdays_morning">Weekdays - Morning (9 AM - 12 PM)</option>
+            <option value="weekdays_afternoon">Weekdays - Afternoon (12 PM - 5 PM)</option>
+            <option value="weekdays_evening">Weekdays - Evening (5 PM - 9 PM)</option>
+            <option value="weekends_morning">Weekends - Morning (9 AM - 12 PM)</option>
+            <option value="weekends_afternoon">Weekends - Afternoon (12 PM - 5 PM)</option>
+            <option value="weekends_evening">Weekends - Evening (5 PM - 9 PM)</option>
+            <option value="flexible">Flexible - Any time</option>
+            <option value="by_appointment">By appointment only</option>
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn" a href="mentee-dashboard.html">Create Account</button>
+        
+        <div id="message" class="message"></div>
+      </form>
+      
+      <div class="login-link">
+        Already have an account? <a href="index.html" onclick="showLogin()">Sign In</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase and App Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/signup.js"></script>
+</body>
+</html>

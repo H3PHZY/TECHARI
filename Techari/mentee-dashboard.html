@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techari - Mentee Dashboard</title>
+    <link rel="stylesheet" href="css/mentee-dashboard.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="about.html" class="logo-link">
+                <div class="logo">T</div>
+                <h1 class="brand-name">Techari</h1>
+                </a>
+            </div>
+            <div class="header-right">
+                <div class="mentor-info">
+                    <div class="avatar" id="userAvatar">
+                        <img id="userProfileImage" src="" alt="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none;">
+                        <span id="userInitials">JS</span>
+                    </div>
+                    <div class="mentor-details">
+                        <h3 id="userName">Loading...</h3>
+                        <p>Mentee</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav-bar">
+            <button class="nav-tab active" onclick="showScreen('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="showScreen('mentors')">Find Mentors</button>
+            <button class="nav-tab" onclick="showScreen('sessions')">My Sessions</button>
+            <button class="nav-tab" onclick="showScreen('progress')">Progress</button>
+            <button class="nav-tab" onclick="showScreen('profile')">Profile</button>
+        </nav>
+    <div class="container">
+        <!-- Dashboard Screen -->
+        <div id="dashboard" class="screen active">
+            <div class="welcome-section">
+                <h1 class="welcome-title" id="welcomeTitle">Welcome to Techari!</h1>
+                <p class="welcome-subtitle">Your journey in tech starts here. Connect with amazing mentors and grow your skills.</p>
+            </div>
+
+`               <div class="progress-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSessions">0</div>
+                    <div class="stat-label">Total Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeMentors">0</div>
+                    <div class="stat-label">Active Mentors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingRequests">0</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="goalProgress">0%</div>
+                    <div class="stat-label">Goal Progress</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Activity</h2>
+                <div class="sessions-list" id="recentActivity">
+                    <div class="no-activity" style="text-align: center; color: #666; padding: 2rem;">
+                        <p>No recent activity yet. Start by finding a mentor!</p>
+                        <p>.........</p>
+                        <button class="btn" onclick="showScreen('mentors'); document.querySelector('[onclick=\"showScreen(\'mentors\')\"]').classList.add('active');">Find Mentors</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Find Mentors Screen -->
+        <div id="mentors" class="screen">
+            <div class="card">
+                <h2>Find Your Perfect Mentor</h2>
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label>Search by Name or Skill</label>
+                        <input type="text" class="form-control" placeholder="e.g. JavaScript, React, UX Design" id="mentorSearch">
+                    </div>
+                    <div class="filter-group">
+                        <label>Tech Interest</label>
+                        <select class="form-control" id="techInterest">
+                            <option value="">All Areas</option>
+                            <option value="frontend">Frontend Development</option>
+                            <option value="backend">Backend Development</option>
+                            <option value="fullstack">Full Stack Development</option>
+                            <option value="mobile">Mobile Development</option>
+                            <option value="ux">UX/UI Design</option>
+                            <option value="data">Data Science</option>
+                            <option value="ml">Machine Learning</option>
+                            <option value="devops">DevOps</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Availability</label>
+                        <select class="form-control" id="availability">
+                            <option value="">Any Time</option>
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="evening">Evening</option>
+                            <option value="weekend">Weekends</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mentors-grid" id="mentorsGrid">
+                    <!-- Mentors will be populated here by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- My Sessions Screen -->
+        <div id="sessions" class="screen">
+            <div class="card">
+                <h2>My Sessions</h2>
+                <div class="sessions-list" id="sessionsList">
+                    <div class="no-sessions" style="text-align: center; color: #666; padding: 2rem;">
+                        <p>No sessions yet. Request your first session with a mentor!</p>
+                        <button class="btn" onclick="showScreen('mentors'); this.classList.add('active');">Find Mentors</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Screen -->
+        <div id="progress" class="screen">
+            <div class="progress-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="completedSessions">0</div>
+                    <div class="stat-label">Completed Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="hoursOfMentorship">0</div>
+                    <div class="stat-label">Hours of Mentorship</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="skillsLearned">0</div>
+                    <div class="stat-label">Skills Learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeGoals">0</div>
+                    <div class="stat-label">Active Goals</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Learning Journey</h2>
+                <div class="sessions-list" id="learningJourney">
+                    <div class="no-progress" style="text-align: center; color: #666; padding: 2rem;">
+                        <p>Your learning journey will appear here as you complete sessions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Current Goals</h2>
+                <div id="currentGoals" style="margin-top: 20px;">
+                    <div class="no-goals" style="text-align: center; color: #666; padding: 2rem;">
+                        <p>Set your learning goals to track your progress.</p>
+                        <button class="btn" onclick="addGoal()">Add Goal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profile" class="screen">
+            <div class="card">
+                <h2>My Profile</h2>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>Profile Photo</label>
+                        <div class="photo-upload-container">
+                            <div class="photo-preview" id="photoPreview">
+                                <img id="currentPhoto" src="" alt="Profile Photo" style="display: none;">
+                                <span id="photoInitials">JS</span>
+                            </div>
+                            <div class="photo-upload-controls">
+                                <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoUpload').click()">Change Photo</button>
+                                <button type="button" class="btn btn-secondary" onclick="removePhoto()" id="removePhotoBtn" style="display: none;">Remove Photo</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" value="" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" value="" id="email" disabled>
+                        <small style="color: #666;">Email cannot be changed</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea class="form-control" rows="4" id="bio" placeholder="Tell us about yourself, your goals, and what you're looking to learn..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Areas of Interest</label>
+                        <input type="text" class="form-control" id="interests" placeholder="e.g. Web Development, AI, Data Science">
+                    </div>
+                    <div class="form-group">
+                        <label>Availability</label>
+                        <select class="form-control" id="userAvailability">
+                            <option value="">Select your availability</option>
+                            <option value="weekdays_morning">Weekdays - Morning (9 AM - 12 PM)</option>
+                            <option value="weekdays_afternoon">Weekdays - Afternoon (12 PM - 5 PM)</option>
+                            <option value="weekdays_evening">Weekdays - Evening (5 PM - 9 PM)</option>
+                            <option value="weekends_morning">Weekends - Morning (9 AM - 12 PM)</option>
+                            <option value="weekends_afternoon">Weekends - Afternoon (12 PM - 5 PM)</option>
+                            <option value="weekends_evening">Weekends - Evening (5 PM - 9 PM)</option>
+                            <option value="flexible">Flexible - Any time</option>
+                            <option value="by_appointment">By appointment only</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn">Save Profile</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Request Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeSessionModal()">&times;</span>
+            <h2>Request Mentorship Session</h2>
+            <form id="sessionRequestForm">
+                <div class="form-group">
+                    <label>Mentor</label>
+                    <input type="text" class="form-control" id="mentorName" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Date</label>
+                    <input type="date" class="form-control" id="sessionDate" min="">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Time</label>
+                    <input type="time" class="form-control" id="sessionTime">
+                </div>
+                <div class="form-group">
+                    <label>Session Topic</label>
+                    <input type="text" class="form-control" id="sessionTopic" placeholder="e.g., React Components, Career Advice">
+                </div>
+                <div class="form-group">
+                    <label>Message to Mentor</label>
+                    <textarea class="form-control" rows="4" id="sessionMessage" placeholder="Introduce yourself and explain what you'd like to learn or discuss..."></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn">Send Request</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeSessionModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase and App Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="js/firebase-config.js"></script>
+
+    <script>
+        // Initialize Firebase services
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Current user data
+        let currentUser = null;
+        let currentUserProfile = null;
+
+        const mentors = [
+        {
+            name: "Kwame Mensah",
+            role: "Full Stack Developer at Flutterwave",
+            avatar: "KM",
+            skills: ["JavaScript", "Node.js", "React", "MongoDB"],
+            bio: "Passionate about building scalable web apps and mentoring junior developers.",
+            availability: "Evenings (WAT)",
+            rating: 4.8
+        },
+        {
+            name: "Zainab Yusuf",
+            role: "Data Scientist at Andela",
+            avatar: "ZY",
+            skills: ["Python", "Pandas", "Machine Learning", "SQL"],
+            bio: "Helping African startups harness data for decision-making.",
+            availability: "Weekends",
+            rating: 4.7
+        },
+        {
+            name: "Munya Dube",
+            role: "DevOps Engineer at Liquid Telecom",
+            avatar: "MD",
+            skills: ["Docker", "Kubernetes", "Jenkins", "Linux"],
+            bio: "From deployment pipelines to cloud infrastructure, I simplify DevOps.",
+            availability: "Flexible",
+            rating: 4.5
+        },
+        {
+            name: "Amina Bello",
+            role: "UI/UX Designer at Paystack",
+            avatar: "AB",
+            skills: ["Figma", "Prototyping", "Design Thinking", "Usability Testing"],
+            bio: "User-obsessed designer creating delightful digital experiences.",
+            availability: "Afternoons",
+            rating: 4.9
+        },
+        {
+            name: "Thulani Moyo",
+            role: "Backend Engineer at Safaricom",
+            avatar: "TM",
+            skills: ["Java", "Spring Boot", "REST APIs", "PostgreSQL"],
+            bio: "I help build robust APIs and mentor new backend developers.",
+            availability: "Mornings (EAT)",
+            rating: 4.6
+        },
+        {
+            name: "Fatou Diop",
+            role: "Cybersecurity Analyst at Orange Senegal",
+            avatar: "FD",
+            skills: ["Network Security", "Ethical Hacking", "SOC", "Firewalls"],
+            bio: "Helping protect African tech from digital threats.",
+            availability: "Evenings",
+            rating: 4.8
+        },
+        {
+            name: "Chinedu Okonkwo",
+            role: "AI Researcher at University of Lagos",
+            avatar: "CO",
+            skills: ["Deep Learning", "NLP", "TensorFlow", "Python"],
+            bio: "Bringing AI closer to education and African research.",
+            availability: "Flexible",
+            rating: 4.7
+        },
+        {
+            name: "Lebo Ndlovu",
+            role: "Product Manager at Yoco",
+            avatar: "LN",
+            skills: ["Agile", "Scrum", "User Stories", "Roadmaps"],
+            bio: "I turn ideas into real products that solve user pain points.",
+            availability: "Weekends",
+            rating: 4.5
+        },
+        {
+            name: "Salim Abdi",
+            role: "Mobile Developer at M-Pesa",
+            avatar: "SA",
+            skills: ["Flutter", "Dart", "Android", "Firebase"],
+            bio: "Helping startups deliver seamless mobile experiences.",
+            availability: "Flexible",
+            rating: 4.9
+        },
+        {
+            name: "Nadia Rachid",
+            role: "Frontend Engineer at Jumia",
+            avatar: "NR",
+            skills: ["Vue.js", "HTML/CSS", "JavaScript", "TypeScript"],
+            bio: "Front-end enthusiast making African e-commerce intuitive.",
+            availability: "Afternoons",
+            rating: 4.6
+        },
+        {
+            name: "May Wambua",
+            role: "Cloud Engineer at Microsoft Africa",
+            avatar: "MW",
+            skills: ["Azure", "CI/CD", "Terraform", "Containers"],
+            bio: "Helping African businesses scale with the cloud.",
+            availability: "Evenings",
+            rating: 4.8
+        },
+        {
+            name: "Rose Atieno",
+            role: "Tech Coach at ALX Africa",
+            avatar: "RA",
+            skills: ["Mentorship", "Career Coaching", "Leadership", "Soft Skills"],
+            bio: "Supporting the next generation of African tech leaders.",
+            availability: "Flexible",
+            rating: 4.9
+        },
+        {
+            name: "Ibrahim Sowe",
+            role: "Machine Learning Engineer at Baobab Group",
+            avatar: "IS",
+            skills: ["Scikit-learn", "ML Ops", "Pandas", "Data Visualization"],
+            bio: "Bringing AI to solve real-world African challenges.",
+            availability: "Mornings",
+            rating: 4.7
+        },
+        {
+            name: "Mariam Toure",
+            role: "Software Tester at Wave",
+            avatar: "MT",
+            skills: ["Manual Testing", "Selenium", "Bug Reporting", "JIRA"],
+            bio: "I love breaking software to make it better.",
+            availability: "Afternoons",
+            rating: 4.4
+        },
+        {
+            name: "Yusuf Kone",
+            role: "Blockchain Developer at Mara",
+            avatar: "YK",
+            skills: ["Solidity", "Smart Contracts", "Ethereum", "Web3.js"],
+            bio: "Working on decentralized finance solutions for Africa.",
+            availability: "Evenings",
+            rating: 4.8
+        },
+        {
+            name: "Tariro Chikafu",
+            role: "Frontend Engineer at ZimSwitch",
+            avatar: "TC",
+            skills: ["React", "Next.js", "CSS", "Redux"],
+            bio: "Zimbabwean code artist building sleek user interfaces.",
+            availability: "Weekends",
+            rating: 4.7
+        },
+        {
+            name: "Josephine Muthoni",
+            role: "AI Ethics Researcher at Mozilla Africa",
+            avatar: "JM",
+            skills: ["AI Ethics", "Policy", "Data Privacy", "Python"],
+            bio: "Tech should serve everyone. I bridge AI and fairness.",
+            availability: "Flexible",
+            rating: 4.9
+        },
+        {
+            name: "Sekou Diallo",
+            role: "Backend Engineer at Interswitch",
+            avatar: "SD",
+            skills: ["Node.js", "SQL", "APIs", "Security"],
+            bio: "Lover of clean code and bulletproof backend logic.",
+            availability: "Mornings",
+            rating: 4.6
+        },
+        {
+            name: "Lilian Makuya",
+            role: "QA Analyst at MTN South Africa",
+            avatar: "LM",
+            skills: ["Selenium", "JIRA", "Agile Testing", "Postman"],
+            bio: "I break things so you don’t have to.",
+            availability: "Evenings",
+            rating: 4.4
+        },
+        {
+            name: "Hamza El Amin",
+            role: "ML Engineer at InstaDeep Tunisia",
+            avatar: "HA",
+            skills: ["PyTorch", "NLP", "Model Tuning", "Python"],
+            bio: "Engineer by day, AI wizard by night.",
+            availability: "Afternoons",
+            rating: 4.8
+        },
+        {
+            name: "Ngozi Okafor",
+            role: "Tech Policy Consultant at AfriLabs",
+            avatar: "NO",
+            skills: ["Tech Policy", "Regulations", "Open Data", "Advocacy"],
+            bio: "Pushing for inclusive digital policy in Africa.",
+            availability: "Flexible",
+            rating: 4.9
+        },
+        {
+            name: "Koffi Mensah",
+            role: "Software Engineer at Taptap Send",
+            avatar: "KM",
+            skills: ["Django", "REST APIs", "Microservices", "PostgreSQL"],
+            bio: "Togolese builder of reliable systems and APIs.",
+            availability: "Evenings",
+            rating: 4.5
+        },
+        {
+            name: "Naledi Kgafela",
+            role: "Product Designer at M-KOPA",
+            avatar: "NK",
+            skills: ["User Research", "Wireframing", "Prototyping", "Figma"],
+            bio: "Design is empathy made visible.",
+            availability: "Mornings",
+            rating: 4.7
+        },
+        {
+            name: "Ahmed Abukar",
+            role: "Systems Administrator at SomaliNet",
+            avatar: "AA",
+            skills: ["Linux", "Server Management", "Networking", "DevOps"],
+            bio: "Helping African orgs stay online 24/7.",
+            availability: "Flexible",
+            rating: 4.6
+        },
+        {
+            name: "Nana Adjei",
+            role: "Mobile App Developer at Hubtel",
+            avatar: "NA",
+            skills: ["Kotlin", "Android Studio", "MVVM", "Firebase"],
+            bio: "Let’s bring your app idea to life.",
+            availability: "Weekends",
+            rating: 4.8
+        },
+        {
+            name: "Tsitsi Ndlovu",
+            role: "Data Analyst at Old Mutual Zimbabwe",
+            avatar: "TN",
+            skills: ["Excel", "Power BI", "SQL", "Data Cleaning"],
+            bio: "Stories lie in the data—I help you find them.",
+            availability: "Afternoons",
+            rating: 4.5
+        },
+        {
+            name: "Boubacar Camara",
+            role: "Blockchain Researcher at Web3Africa",
+            avatar: "BC",
+            skills: ["Solidity", "Smart Contracts", "DeFi", "Blockchain Protocols"],
+            bio: "Exploring how decentralized systems empower Africans.",
+            availability: "Flexible",
+            rating: 4.7
+        },
+        {
+            name: "Fikile Mokoena",
+            role: "Cloud Architect at Dimension Data",
+            avatar: "FM",
+            skills: ["AWS", "Azure", "Cloud Security", "Infrastructure as Code"],
+            bio: "I help businesses migrate and thrive in the cloud.",
+            availability: "Mornings",
+            rating: 4.9
+        },
+        {
+            name: "Omar Gaye",
+            role: "Digital Marketer & Tech Coach at YALI Dakar",
+            avatar: "OG",
+            skills: ["SEO", "Social Media", "Digital Strategy", "Mentorship"],
+            bio: "Tech + people = transformation. I love both.",
+            availability: "Evenings",
+            rating: 4.6
+        },
+        {
+            name: "Zahara Abebe",
+            role: "Junior Software Engineer at Gebeya",
+            avatar: "ZA",
+            skills: ["HTML", "CSS", "JavaScript", "GitHub"],
+            bio: "Just started my journey, eager to grow & give back.",
+            availability: "Weekends",
+            rating: 4.3
+        },
+        {
+            name: "Fatou Binta Sow",
+            role: "UX Researcher at Andela",
+            avatar: "FBS",
+            skills: ["User Research", "Usability Testing", "Interviews", "Persona Design"],
+            bio: "Design without research is guesswork. I help teams build what people truly need.",
+            availability: "Afternoons",
+            rating: 4.8
+        },
+        {
+            name: "Chinedu Eze",
+            role: "Cybersecurity Analyst at CyberSafe Foundation",
+            avatar: "CE",
+            skills: ["Pen Testing", "Network Security", "Ethical Hacking", "Awareness Training"],
+            bio: "Passionate about building a safer African cyberspace.",
+            availability: "Evenings",
+            rating: 4.9
+        },
+        {
+            name: "Wairimu Nduta",
+            role: "Product Manager at Twiga Foods",
+            avatar: "WN",
+            skills: ["Agile", "Product Strategy", "MVPs", "Stakeholder Management"],
+            bio: "I connect tech with real-world problems, especially in food systems.",
+            availability: "Flexible",
+            rating: 4.7
+        },
+        {
+            name: "Moussa Traoré",
+            role: "Data Engineer at mPharma",
+            avatar: "MT",
+            skills: ["ETL Pipelines", "Data Lakes", "SQL", "Apache Airflow"],
+            bio: "West African data wrangler. I turn messy data into gold.",
+            availability: "Weekends",
+            rating: 4.6
+        },
+        {
+            name: "Lindiwe Dlamini",
+            role: "AI Educator at Zindi Africa",
+            avatar: "LD",
+            skills: ["Machine Learning", "Data Science", "Mentorship", "Scikit-learn"],
+            bio: "Training the next wave of African AI talent.",
+            availability: "Mornings",
+            rating: 4.8
+        },
+        {
+            name: "Kwame Boateng",
+            role: "Mobile Dev Lead at mPedigree",
+            avatar: "KB",
+            skills: ["Flutter", "Dart", "Android/iOS", "Firebase"],
+            bio: "I build mobile apps that save lives & solve problems.",
+            availability: "Evenings",
+            rating: 4.6
+        },
+        {
+            name: "Safiya Idris",
+            role: "Software Engineer at Paystack",
+            avatar: "SI",
+            skills: ["Laravel", "Vue.js", "MySQL", "API Design"],
+            bio: "Northern Nigerian dev — I love full-stack adventures.",
+            availability: "Flexible",
+            rating: 4.7
+        },
+        {
+            name: "Jean-Pierre Mutabazi",
+            role: "Tech Lead at Rwanda Coding Academy",
+            avatar: "JPM",
+            skills: ["Python", "C++", "Embedded Systems", "Mentorship"],
+            bio: "Building the next generation of African tech leaders.",
+            availability: "Afternoons",
+            rating: 4.9
+        },
+        {
+            name: "Amara Mbele",
+            role: "Game Developer at MaliGames Studio",
+            avatar: "AM",
+            skills: ["Unity", "C#", "Game Mechanics", "2D/3D Design"],
+            bio: "Gaming can change minds. I build playable stories.",
+            availability: "Weekends",
+            rating: 4.5
+        },
+        {
+            name: "Zubairu Bello",
+            role: "Cloud Solutions Architect at Google Africa",
+            avatar: "ZB",
+            skills: ["GCP", "Terraform", "Cloud Security", "Kubernetes"],
+            bio: "Helping African startups scale fearlessly in the cloud.",
+            availability: "Evenings",
+            rating: 4.8
+        },
+        {
+            name: "Tebogo Mahlangu",
+            role: "IoT Engineer at SmartFarm SA",
+            avatar: "TM",
+            skills: ["Raspberry Pi", "Arduino", "Sensor Networks", "Python"],
+            bio: "Making agriculture smarter, one sensor at a time.",
+            availability: "Flexible",
+            rating: 4.6
+        },
+        {
+            name: "Hadiza Umar",
+            role: "Full Stack Developer at ALX Africa",
+            avatar: "HU",
+            skills: ["React", "Node.js", "MongoDB", "DevOps"],
+            bio: "Code is poetry. Let’s write it well together.",
+            availability: "Weekends",
+            rating: 4.7
+        },
+        {
+            name: "Mohamed El-Tayeb",
+            role: "Data Scientist at Orange Egypt",
+            avatar: "MET",
+            skills: ["R", "Power BI", "Big Data", "Predictive Modeling"],
+            bio: "Data science should tell a story. I help you write it.",
+            availability: "Mornings",
+            rating: 4.9
+        },
+        {
+            name: "Adama Diop",
+            role: "Front-End Mentor at SheCodes Senegal",
+            avatar: "AD",
+            skills: ["HTML", "CSS", "JavaScript", "Responsive Design"],
+            bio: "Helping young women in West Africa break into tech.",
+            availability: "Afternoons",
+            rating: 4.8
+        },
+        {
+            name: "Namukolo Chisanga",
+            role: "Tech & Inclusion Advocate at BongoHive Zambia",
+            avatar: "NC",
+            skills: ["Tech4Good", "Inclusive Design", "Community Building", "Workshop Facilitation"],
+            bio: "Tech is only powerful when it's inclusive. That’s my mission.",
+            availability: "Flexible",
+            rating: 4.7
+        }
+        ];
+
+
+        // Authentication state handler
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                console.log('User authenticated:', user.email);
+                await loadUserProfile(user.uid);
+                updateUserInterface();
+                loadMentors();
+                loadUserSessions();
+            } else {
+                console.log('User not authenticated, redirecting to login');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Load user profile from Firestore
+        async function loadUserProfile(uid) {
+            try {
+                const profileDoc = await db.collection('profiles').doc(uid).get();
+                if (profileDoc.exists) {
+                    currentUserProfile = profileDoc.data();
+                    console.log('User profile loaded:', currentUserProfile);
+                } else {
+                    console.log('No profile found, using default');
+                    currentUserProfile = {
+                        name: currentUser.displayName || 'User',
+                        email: currentUser.email,
+                        role: 'mentee',
+                        bio: '',
+                        interests: '',
+                        availability: '',
+                        photoURL: currentUser.photoURL || ''
+                    };
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                currentUserProfile = {
+                    name: currentUser.displayName || 'User',
+                    email: currentUser.email,
+                    role: 'mentee',
+                    bio: '',
+                    interests: '',
+                    availability: '',
+                    photoURL: currentUser.photoURL || ''
+                };
+            }
+        }
+
+        // Update user interface with current user data
+        function updateUserInterface() {
+            if (!currentUserProfile) return;
+
+            // Update header
+            const firstName = currentUserProfile.name.split(' ')[0];
+            document.getElementById('userName').textContent = currentUserProfile.name;
+            document.getElementById('welcomeTitle').textContent = `Welcome to Techari, ${firstName}!`;
+
+            // Update avatar
+            updateUserAvatar();
+
+            // Update profile form
+            document.getElementById('fullName').value = currentUserProfile.name || '';
+            document.getElementById('email').value = currentUserProfile.email || '';
+            document.getElementById('bio').value = currentUserProfile.bio || '';
+            document.getElementById('interests').value = currentUserProfile.interests || '';
+            document.getElementById('userAvailability').value = currentUserProfile.availability || '';
+        }
+
+        // Update user avatar
+        function updateUserAvatar() {
+            const avatarContainer = document.getElementById('userAvatar');
+            const profileImage = document.getElementById('userProfileImage');
+            const initials = document.getElementById('userInitials');
+            const photoPreview = document.getElementById('photoPreview');
+            const currentPhoto = document.getElementById('currentPhoto');
+            const photoInitials = document.getElementById('photoInitials');
+
+            if (currentUserProfile.photoURL) {
+                // Show profile image
+                profileImage.src = currentUserProfile.photoURL;
+                profileImage.style.display = 'block';
+                initials.style.display = 'none';
+                
+                // Update profile page preview
+                currentPhoto.src = currentUserProfile.photoURL;
+                currentPhoto.style.display = 'block';
+                photoInitials.style.display = 'none';
+                document.getElementById('removePhotoBtn').style.display = 'inline-block';
+            } else {
+                // Show initials
+                const userInitials = generateInitials(currentUserProfile.name);
+                initials.textContent = userInitials;
+                initials.style.display = 'block';
+                profileImage.style.display = 'none';
+                
+                // Update profile page preview
+                photoInitials.textContent = userInitials;
+                photoInitials.style.display = 'block';
+                currentPhoto.style.display = 'none';
+                document.getElementById('removePhotoBtn').style.display = 'none';
+            }
+        }
+
+        // Generate initials from name
+        function generateInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ')
+                      .map(word => word.charAt(0).toUpperCase())
+                      .join('')
+                      .substring(0, 2);
+        }
+
+        // Load mentors on page load
+        function loadMentors() {
+            const mentorsGrid = document.getElementById('mentorsGrid');
+            mentorsGrid.innerHTML = '';
+            
+            mentors.forEach(mentor => {
+                const mentorCard = document.createElement('div');
+                mentorCard.className = 'mentor-card';
+                mentorCard.innerHTML = `
+                    <div class="mentor-header">
+                        <div class="mentor-avatar">${mentor.avatar}</div>
+                        <div class="mentor-info">
+                            <h3>${mentor.name}</h3>
+                            <div class="mentor-role">${mentor.role}</div>
+                            <div style="color: #ffa726; font-size: 14px; margin-top: 5px;">
+                                ★ ${mentor.rating} • Available: ${mentor.availability}
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color: #666; margin-bottom: 15px;">${mentor.bio}</p>
+                    <div class="skills">
+                        ${mentor.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="btn" onclick="requestSession('${mentor.name}')">Request Session</button>
+                        <button class="btn btn-secondary" onclick="viewMentorProfile('${mentor.name}')">View Profile</button>
+                    </div>
+                `;
+                mentorsGrid.appendChild(mentorCard);
+            });
+        }
+
+        // Load user sessions from Firestore
+        async function loadUserSessions() {
+            if (!currentUser) return;
+
+            try {
+                const sessionsQuery = db.collection('sessions')
+                    .where('menteeId', '==', currentUser.uid)
+                    .orderBy('createdAt', 'desc');
+                
+                const sessionsSnapshot = await sessionsQuery.get();
+                const sessions = [];
+                
+                sessionsSnapshot.forEach(doc => {
+                    sessions.push({ id: doc.id, ...doc.data() });
+                });
+
+                updateSessionsUI(sessions);
+                updateStatsUI(sessions);
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                // Handle case where index might not exist yet
+                updateSessionsUI([]);
+                updateStatsUI([]);
+            }
+        }
+
+        // Update sessions UI
+        function updateSessionsUI(sessions) {
+            const sessionsList = document.getElementById('sessionsList');
+            const recentActivity = document.getElementById('recentActivity');
+
+            if (sessions.length === 0) {
+                sessionsList.innerHTML = `
+                    <div class="no-sessions" style="text-align: center; color: #666; padding: 2rem;">
+                        <p>No sessions yet. Request your first session with a mentor!</p>
+                        <button class="btn" onclick="showScreen('mentors'); document.querySelector('[onclick=\"showScreen(\'mentors\')\"]').classList.add('active');">Find Mentors</button>
+                    </div>
+                `;
+                recentActivity.innerHTML = sessionsList.innerHTML;
+                return;
+            }
+
+            // Update sessions list
+            sessionsList.innerHTML = sessions.map(session => createSessionHTML(session)).join('');
+            
+            // Update recent activity (show only first 3)
+            const recentSessions = sessions.slice(0, 3);
+            recentActivity.innerHTML = recentSessions.map(session => createSessionHTML(session)).join('');
+        }
+
+        // Create session HTML
+        function createSessionHTML(session) {
+            const statusClass = `status-${session.status}`;
+            const statusText = session.status.charAt(0).toUpperCase() + session.status.slice(1);
+            
+            return `
+                <div class="session-item session-${session.status}">
+                    <div class="session-header">
+                        <div>
+                            <h4>${session.topic} with ${session.mentorName}</h4>
+                            <p style="color: #666; margin: 5px 0;">${formatDate(session.scheduledDate)}</p>
+                        </div>
+                        <span class="session-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <p><strong>Topic:</strong> ${session.topic}</p>
+                    ${session.message ? `<p><strong>Your Message:</strong> ${session.message}</p>` : ''}
+                    <div style="margin-top: 15px;">
+                        ${getSessionActions(session)}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get session actions based on status
+        function getSessionActions(session) {
+            switch (session.status) {
+                case 'pending':
+                    return `<button class="btn btn-secondary" onclick="cancelSession('${session.id}')">Cancel Request</button>`;
+                case 'confirmed':
+                    return `
+                        <button class="btn" onclick="markComplete('${session.id}')">Mark as Complete</button>
+                        <button class="btn btn-secondary" onclick="rescheduleSession('${session.id}')">Reschedule</button>
+                    `;
+                case 'completed':
+                    return `<button class="btn btn-secondary" onclick="viewSessionDetails('${session.id}')">View Details</button>`;
+                default:
+                    return '';
+            }
+        }
+
+        // Update stats UI
+        function updateStatsUI(sessions) {
+            const totalSessions = sessions.length;
+            const completedSessions = sessions.filter(s => s.status === 'completed').length;
+            const pendingSessions = sessions.filter(s => s.status === 'pending').length;
+            const activeMentors = new Set(sessions.map(s => s.mentorId)).size;
+
+            document.getElementById('totalSessions').textContent = totalSessions;
+            document.getElementById('activeMentors').textContent = activeMentors;
+            document.getElementById('pendingRequests').textContent = pendingSessions;
+            document.getElementById('completedSessions').textContent = completedSessions;
+            document.getElementById('hoursOfMentorship').textContent = completedSessions * 1; // Assume 1 hour per session
+            document.getElementById('skillsLearned').textContent = completedSessions; // Simplified
+            document.getElementById('goalProgress').textContent = totalSessions > 0 ? Math.min(100, (completedSessions / totalSessions) * 100).toFixed(0) + '%' : '0%';
+        }
+
+        // Format date for display
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Date TBD';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // Navigation functions
+        function showScreen(screenName) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(screenName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Session request functions
+        let currentMentor = null;
+
+        function requestSession(mentorName, mentorId) {
+            currentMentor = { name: mentorName, id: mentorId };
+            document.getElementById('mentorName').value = mentorName;
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sessionDate').min = today;
+            
+            document.getElementById('sessionModal').classList.add('active');
+        }
+
+        function closeSessionModal() {
+            document.getElementById('sessionModal').classList.remove('active');
+            document.getElementById('sessionRequestForm').reset();
+        }
+
+        // Handle session request form submission
+        document.getElementById('sessionRequestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentUser || !currentMentor) return;
+
+            const sessionData = {
+                menteeId: currentUser.uid,
+                menteeName: currentUserProfile.name,
+                mentorId: currentMentor.id,
+                mentorName: currentMentor.name,
+                scheduledDate: new Date(document.getElementById('sessionDate').value + 'T' + document.getElementById('sessionTime').value),
+                topic: document.getElementById('sessionTopic').value,
+                message: document.getElementById('sessionMessage').value,
+                status: 'pending',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('sessions').add(sessionData);
+                alert(`Session request sent to ${sessionData.mentorName}!`);
+                closeSessionModal();
+                loadUserSessions(); // Refresh sessions
+                showScreen('sessions');
+                document.querySelector('[onclick="showScreen(\'sessions\')"]').classList.add('active');
+            } catch (error) {
+                console.error('Error creating session request:', error);
+                alert('Error sending session request. Please try again.');
+            }
+        });
+
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) return;
+
+            const updatedProfile = {
+                name: document.getElementById('fullName').value,
+                bio: document.getElementById('bio').value,
+                interests: document.getElementById('interests').value,
+                availability: document.getElementById('userAvailability').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('profiles').doc(currentUser.uid).update(updatedProfile);
+                
+                // Update local profile
+                Object.assign(currentUserProfile, updatedProfile);
+                updateUserInterface();
+                
+                alert('Profile updated successfully!');
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Error updating profile. Please try again.');
+            }
+        });
+
+        // Photo upload handling
+        document.getElementById('photoUpload').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file || !currentUser) return;
+
+            try {
+                // Upload to Firebase Storage
+                const storageRef = storage.ref(`profile-photos/${currentUser.uid}`);
+                const uploadTask = await storageRef.put(file);
+                const downloadURL = await uploadTask.ref.getDownloadURL();
+
+                // Update profile in Firestore
+                await db.collection('profiles').doc(currentUser.uid).update({
+                    photoURL: downloadURL,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update local profile and UI
+                currentUserProfile.photoURL = downloadURL;
+                updateUserAvatar();
+                
+                alert('Profile photo updated successfully!');
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('Error uploading photo. Please try again.');
+            }
+        });
+
+        // Remove photo
+        async function removePhoto() {
+            if (!currentUser) return;
+
+            try {
+                // Remove from Firebase Storage
+                const storageRef = storage.ref(`profile-photos/${currentUser.uid}`);
+                await storageRef.delete();
+
+                // Update profile in Firestore
+                await db.collection('profiles').doc(currentUser.uid).update({
+                    photoURL: firebase.firestore.FieldValue.delete(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update local profile and UI
+                currentUserProfile.photoURL = '';
+                updateUserAvatar();
+                
+                alert('Profile photo removed successfully!');
+            } catch (error) {
+                console.error('Error removing photo:', error);
+                alert('Error removing photo. Please try again.');
+            }
+        }
+
+        // Search and filter functionality
+        document.getElementById('mentorSearch').addEventListener('input', filterMentors);
+        document.getElementById('techInterest').addEventListener('change', filterMentors);
+        document.getElementById('availability').addEventListener('change', filterMentors);
+
+        function filterMentors() {
+            const searchTerm = document.getElementById('mentorSearch').value.toLowerCase();
+            const techInterest = document.getElementById('techInterest').value;
+            const availability = document.getElementById('availability').value;
+            
+            const mentorsGrid = document.getElementById('mentorsGrid');
+            const mentorCards = mentorsGrid.querySelectorAll('.mentor-card');
+            
+            mentorCards.forEach((card, index) => {
+                const mentor = mentors[index];
+                let show = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    const searchMatch = mentor.name.toLowerCase().includes(searchTerm) ||
+                                      mentor.skills.some(skill => skill.toLowerCase().includes(searchTerm)) ||
+                                      mentor.bio.toLowerCase().includes(searchTerm);
+                    if (!searchMatch) show = false;
+                }
+                
+                // Tech interest filter
+                if (techInterest) {
+                    const interestMap = {
+                        'frontend': ['React', 'JavaScript', 'CSS', 'TypeScript', 'Vue.js', 'HTML/CSS'],
+                        'backend': ['Node.js', 'Python', 'MongoDB', 'Java', 'Spring Boot', 'REST APIs', 'PostgreSQL'],
+                        'ux': ['UI/UX Design', 'Figma', 'User Research', 'Prototyping', 'Design Thinking', 'Usability Testing'],
+                        'data': ['Python', 'Machine Learning', 'Data Analysis', 'SQL', 'Pandas', 'Deep Learning', 'NLP', 'TensorFlow'],
+                        'devops': ['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Jenkins', 'Linux', 'Azure', 'Terraform'],
+                        'mobile': ['Flutter', 'Dart', 'Android', 'Firebase', 'Kotlin', 'Android Studio'],
+                        'ml': ['Machine Learning', 'Deep Learning', 'NLP', 'TensorFlow', 'Python', 'Scikit-learn', 'PyTorch']
+                    };
+                    
+                    const relevantSkills = interestMap[techInterest] || [];
+                    const hasRelevantSkills = mentor.skills.some(skill => 
+                        relevantSkills.includes(skill)
+                    );
+                    
+                    if (!hasRelevantSkills) show = false;
+                }
+                
+                // Availability filter
+                if (availability) {
+                    const availabilityMatch = mentor.availability.toLowerCase().includes(availability) ||
+                                            mentor.availability.toLowerCase().includes('flexible');
+                    if (!availabilityMatch) show = false;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Session management functions
+        async function cancelSession(sessionId) {
+            if (!confirm('Are you sure you want to cancel this session request?')) return;
+
+            try {
+                await db.collection('sessions').doc(sessionId).update({
+                    status: 'cancelled',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('Session request cancelled.');
+                loadUserSessions(); // Refresh sessions
+            } catch (error) {
+                console.error('Error cancelling session:', error);
+                alert('Error cancelling session. Please try again.');
+            }
+        }
+
+        async function markComplete(sessionId) {
+            if (!confirm('Mark this session as completed?')) return;
+
+            try {
+                await db.collection('sessions').doc(sessionId).update({
+                    status: 'completed',
+                    completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('Session marked as completed!');
+                loadUserSessions(); // Refresh sessions
+            } catch (error) {
+                console.error('Error marking session complete:', error);
+                alert('Error updating session. Please try again.');
+            }
+        }
+
+        function rescheduleSession(sessionId) {
+            alert('Reschedule functionality coming soon! Please contact your mentor directly for now.');
+        }
+
+        function viewSessionDetails(sessionId) {
+            alert('Session details view coming soon!');
+        }
+
+       function viewMentorProfile(mentorName) {
+            // Create a mapping of the first 6 mentor names to their corresponding HTML files
+            const mentorPageMapping = {
+                "Kwame Mensah": "mentor1.html",           // First mentor in your array
+                "Zainab Yusuf": "mentor2.html",          // Second mentor in your array
+                "Munya Dube": "mentor3.html",            // Third mentor in your array
+                "Amina Bello": "mentor4.html",           // Fourth mentor in your array
+                "Thulani Moyo": "mentor5.html",          // Fifth mentor in your array
+                "Fatou Diop": "mentor6.html"             // Sixth mentor in your array
+            };
+            
+            // Get the corresponding page for the mentor
+            const mentorPage = mentorPageMapping[mentorName];
+            
+            if (mentorPage) {
+                // If a specific page exists for this mentor, navigate to it
+                window.location.href = mentorPage;
+            } else {
+                // For mentors 7 and beyond, show coming soon message
+                alert(`${mentorName}'s detailed profile is coming soon!`);
+            }
+        }
+
+        function cancelEdit() {
+            if (confirm('Discard changes to your profile?')) {
+                // Reset form to original values
+                document.getElementById('profileForm').reset();
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMentors();
+            
+            // Close modal when clicking outside
+            document.getElementById('sessionModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSessionModal();
+                }
+            });
+        });
+
+
+        // Goals management
+        function addGoal() {
+            const goalTitle = prompt('Enter your learning goal:');
+            if (goalTitle) {
+                alert('Goal setting functionality coming soon! For now, your goal has been noted.');
+            }
+        }
+
+        function cancelEdit() {
+            if (confirm('Discard changes to your profile?')) {
+                updateUserInterface(); // Reset form to original values
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                await auth.signOut();
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error logging out:', error);
+                alert('Error logging out. Please try again.');
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close modal when clicking outside
+            document.getElementById('sessionModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSessionModal();
+                }
+            });
+
+            // Initialize UI elements that don't require authentication
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sessionDate').min = today;
+        });
+    </script>
+</body>
+</html>
